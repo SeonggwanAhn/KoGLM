@@ -1,0 +1,11 @@
+1) tokenizer: uncased BertWordPieceTokenizer (32k vocab)
+issue: (use pretrained tokenizer) vs (make it myself)?
+=> use pretrained tokenizer
++
+use existing GLM code and modify some parts for Korean..
+
+(my tokenizer -> later... if you have time to make it...)
+
+2) kss -> sentence split
+3) remove hanja, english, special character
+
