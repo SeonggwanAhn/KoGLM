@@ -27,8 +27,6 @@ class Processor:
 
 
     def write(self, file_name, sentences):
-        assert file_name.endswith('.json')
-        file_name = file_name.split('.json')[0] + '.txt'
         with open(os.path.join(self.save_dir, file_name), 'w+') as f:
             f.write('\n'.join(sentences))
 
@@ -36,45 +34,32 @@ class Processor:
     def process(self):
         def get_file_list():
             file_list = os.listdir(self.data_dir)
-            json_files = [f for f in file_list if f.endswith("json")]
-            return json_files
+            src_files = [f for f in file_list if f.endswith("txt")]
+            return src_files
         
 
-        json_files = get_file_list()
+        src_files = get_file_list()
         entire_string = list()  # for spoken
         file_name_list = list()  # for spoken
-        for json_file_name in tqdm(json_files, desc="processing json files"):
-            json_file = os.path.join(self.data_dir, json_file_name)
-            txt_file_name = json_file_name.split('.json')[0] + '.txt'
+        for src_file_name in tqdm(src_files, desc="processing json files"):
+            src_file = os.path.join(self.data_dir, src_file_name)
+            txt_file_name = str(src_file_name)
             if os.path.exists(os.path.join(self.save_dir, txt_file_name)):
                 continue
             sentences = list()
-            with open(json_file) as f:
-                data = json.load(f)
-            doc = data['document']
-            """
-            if self.category == 'utterance':
-                string = ""
-                for article in doc:
-                    for l in article[self.category]:
-                        text = l['form'].replace('\n', '').replace('\r', '')
-                        text = re.sub('[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9\.\/\!\@\#\$\%\^\&?\;\:\`\'\-\,\|\~\_\(\)\[\]\{\}\"\s\+-=\\\\]', '', text)
-                        string += text + " "
-                entire_string.append(string.strip())
-                file_name_list.append(json_file_name)
-            """
-            if self.category == 'paragraph' or self.category == 'utterance':
-                """
-                for article in doc:
-                    for l in article[self.category]:
-                """
-                # for only KParlty
-                for l in doc[self.category]:
-                    sentences.append(l['form'].replace('\n','').replace('\r',''))
-        
-                self.write(json_file_name, sentences)
-        
-        """
+            with open(src_file, 'r') as f:
+                lines = f.readlines()
+            string = ""
+            for line in lines:
+                line = line.strip('\n')
+                text = line.replace('\n', '').replace('\r', '')
+                text = re.sub('[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9\.\/\!\@\#\$\%\^\&?\;\:\`\'\-\,\|\~\_\(\)\[\]\{\}\"\s\+-=\\\\]', '', text)
+                if len(text) == 0:
+                    continue
+                string += text + " "
+            entire_string.append(string.strip())
+            file_name_list.append(txt_file_name)
+            
         batch_size = 1
         if entire_string != [] and file_name_list != []:
             assert len(entire_string) == len(file_name_list)
@@ -104,7 +89,7 @@ class Processor:
                 assert len(sentence_list) == len(file_batch)
                 for sent, file_name in zip(tqdm(sentence_list, desc='writing...'), file_batch):
                     self.write(file_name, sent)
-        """    
+            
             # bug => not same list size with entire_string
             # sentence_list = split_sentences(entire_string, backend="mecab")
             # for sent, file_name in zip(tqdm(sentence_list, desc='writing...'), file_name_list):
