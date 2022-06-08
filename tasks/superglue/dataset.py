@@ -1325,7 +1325,6 @@ class CMRCProcessor(DataProcessor):
 
 
 class NSMCProcessor(DataProcessor):
-    # confused it should return verbalizer ??
     def get_labels(self):
         return ["0", "1"]
    
@@ -1355,7 +1354,7 @@ class NSMCProcessor(DataProcessor):
 class KornliProcessor(DataProcessor):
     #TODO: make num_choices
     def get_labels(self):
-        raise ["contradiction", "neutral", "entailment"]
+        return ["contradiction", "neutral", "entailment"]
 
     def get_train_examples(self, data_dir) -> List[InputExample]:
         train_examples = list()

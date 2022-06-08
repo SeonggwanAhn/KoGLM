@@ -1446,7 +1446,7 @@ class KornliPVP(PVP):
 
     @staticmethod
     def available_patterns():
-        return [0, 1, 2, 3, 4, 5]
+        return [0, 1, 2, 3, 4]
 
     def get_parts(self, example: InputExample) -> FilledPattern:
         sent_a, sent_b = self.shortenable(example.text_a), self.shortenable(example.text_b)
@@ -1460,13 +1460,11 @@ class KornliPVP(PVP):
             parts_a, parts_b = ["전제:", sent_a, " 이 때, ", sent_b, "는 ", [self.mask], "이다."], []
 
         elif self.pattern_id == 3:
-            parts_a, parts_b = ["전제:", sent_a, " 가설:", sent_b, " 정답:", [self.mask]], []
+            parts_a, parts_b = ["전제:", None, sent_a, None, " 가설:", sent_b, None, " 정답:", [self.mask]], []
 
         elif self.pattern_id == 4:
-            parts_a, parts_b = ["전제:", sent_a, " 질문:", sent_b, " 거짓인가?", " 정답:", [self.mask]], []
+            parts_a, parts_b = ["전제:", sent_a, " 질문:", sent_b, " 참인가? 거짓인가?", " 정답:", [self.mask]], []
         
-        elif self.pattern_id == 5:
-            parts_a, parts_b = ["전제:", sent_a, " 질문:", sent_b, " 참인가?", " 정답:", [self.mask]], []
         else:
             raise NotImplementedError(self.pattern_id)
         parts_a, parts_b = self.replace_prompt_tokens(parts_a, parts_b)
