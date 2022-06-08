@@ -207,4 +207,6 @@ def multichoice_evaluate(model, dataloader, example_dict, args):
         labels.append(label)
         examples.append(example)
     torch.distributed.barrier()
+    # if you want to show predicted results
+    # print(f'predictions: {predictions}')
     return predictions, labels, examples
