@@ -79,7 +79,7 @@ def add_fp16_config_args(parser):
     """Mixed precision arguments."""
 
     group = parser.add_argument_group('fp16', 'fp16 configurations')
-    # edit (store_true) => (store_false) (kor_blocklm_base - fp16:true)
+
     group.add_argument('--fp16', action='store_true',
                        help='Run model in fp16 mode')
     group.add_argument('--fp32-embedding', action='store_true',

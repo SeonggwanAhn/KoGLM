@@ -1369,7 +1369,6 @@ class CMRCPVP(PVP):
 
 
 class NSMCPVP(PVP):
-    
     VERBALIZER_A = {
         "0": ["부정적"],
         "1": ["긍정적"]
@@ -1391,7 +1390,7 @@ class NSMCPVP(PVP):
     
     @staticmethod
     def available_patterns():
-        return [0, 1, 2, 3]
+        return [0, 1, 2, 3, 4]
     
     # is it necessary?
     @property
@@ -1425,6 +1424,63 @@ class NSMCPVP(PVP):
         elif self.pattern_id in [3, 4, 5]:
             return NSMCPVP.VERBALIZER_C[label]
         
+
+class KornliPVP(PVP):
+    VERBALIZER_A = {
+        "contradiction": ["거짓"],
+        "entailment": ["참"],
+        "neutral": ["중립"]
+    }
+
+    VERBALIZER_B = {
+        "contradiction": ["맞다"],
+        "entailment": ["아니다"],
+        "neutral": ["모르겠다"]
+    }
+
+    VERBALIZER_C = {
+        "contradiction": ["아니다"],
+        "entailment": ["맞다"],
+        "neutral": ["모르겠다"]
+    }
+
+    @staticmethod
+    def available_patterns():
+        return [0, 1, 2, 3, 4, 5]
+
+    def get_parts(self, example: InputExample) -> FilledPattern:
+        sent_a, sent_b = self.shortenable(example.text_a), self.shortenable(example.text_b)
+        if self.pattern_id == 0:
+            parts_a, parts_b = ["문장 ", "'", sent_a, "'", "와 ", "문장 ", "'", sent_b, "'", "는 ", [self.mask], "이다."], []
+        
+        elif self.pattern_id == 1:
+            parts_a, parts_b = [sent_a, "이 때, ", sent_b, "는 ", [self.mask], "이다."], []
+
+        elif self.pattern_id == 2:
+            parts_a, parts_b = ["전제:", sent_a, " 이 때, ", sent_b, "는 ", [self.mask], "이다."], []
+
+        elif self.pattern_id == 3:
+            parts_a, parts_b = ["전제:", sent_a, " 가설:", sent_b, " 정답:", [self.mask]], []
+
+        elif self.pattern_id == 4:
+            parts_a, parts_b = ["전제:", sent_a, " 질문:", sent_b, " 거짓인가?", " 정답:", [self.mask]], []
+        
+        elif self.pattern_id == 5:
+            parts_a, parts_b = ["전제:", sent_a, " 질문:", sent_b, " 참인가?", " 정답:", [self.mask]], []
+        else:
+            raise NotImplementedError(self.pattern_id)
+        parts_a, parts_b = self.replace_prompt_tokens(parts_a, parts_b)
+        return parts_a, parts_b
+
+    def verbalize(self, label) -> List[str]:
+        if self.pattern_id in [0, 1, 2, 3]:
+            return KornliPVP.VERBALIZER_A[label]
+        elif self.pattern_id in [4]:
+            return KornliPVP.VERBALIZER_B[label]
+        elif self.pattern_id in [5]:
+            return KornliPVP.VERBALIZER_C[label]
+
+
 
 def get_verbalization_ids(word: str, tokenizer, force_single_token: bool) -> Union[int, List[int]]:
     """
@@ -1478,5 +1534,6 @@ PVPS = {
     'tnews': TNewsPVP,
     'cluewsc': CLUEWSCPVP,
     'nsmc': NSMCPVP,
+    'kornli': KornliPVP
     # 'cmrc': CMRCPVP
 }

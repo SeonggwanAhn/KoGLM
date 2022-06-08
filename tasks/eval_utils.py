@@ -30,15 +30,13 @@ from typing import List
 from tasks.data_utils import InputExample
 from sklearn.metrics import f1_score
 
-# for evaluation, append tokens
-def accuracy_metric(predictions, labels, examples, tokens):
+
+def accuracy_metric(predictions, labels, examples):
     count = 0
     num_predictions = max(len(predictions), 1)
     assert len(predictions) == len(labels)
-    for prediction, label, tks in zip(predictions, labels, tokens):
+    for prediction, label in zip(predictions, labels):
         count += prediction == label
-        # if prediction != label:
-        #     print(f'wrong answer: {tks}')
     return count * 100.0 / num_predictions
 
 
@@ -86,15 +84,13 @@ def accuracy_func_provider(single_dataset_provider, metric_dict, args, is_test=F
             if hasattr(dataloader.dataset, "examples"):
                 example_dict = dataloader.dataset.examples
             start_time = time.time()
-            # for evaluation, append tokens which is output of multichoice_evaluate()
-            predictions, labels, examples, tokens = eval_func(model, dataloader, example_dict, args)
+            predictions, labels, examples = eval_func(model, dataloader, example_dict, args)
             elapsed_time = time.time() - start_time
             if output_predictions and torch.distributed.get_rank() == 0:
                 filename = os.path.join(args.log_dir, name + '.jsonl')
                 output_func(predictions, examples, filename)
             total_count = len(predictions)
-            # for evaluation, append tokens which is input of accuracy_metric()
-            single_dict = {key: metric(predictions, labels, examples, tokens) for key, metric in metric_dict.items()}
+            single_dict = {key: metric(predictions, labels, examples) for key, metric in metric_dict.items()}
             output_str = ' > |epoch: {}| metrics for {}: total {}'.format(epoch, name, total_count)
             for key, value in single_dict.items():
                 output_str += " {} = {:.4f} %".format(key, value)
@@ -211,5 +207,4 @@ def multichoice_evaluate(model, dataloader, example_dict, args):
         labels.append(label)
         examples.append(example)
     torch.distributed.barrier()
-    # for evaluation, append data['text']
-    return predictions, labels, examples, data['text']
+    return predictions, labels, examples

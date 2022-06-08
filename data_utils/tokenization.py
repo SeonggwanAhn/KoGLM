@@ -369,8 +369,8 @@ class Tokenizer(object):
 
             tokenized_text = []
             # modify because var 'text' is not preprocessed
-            # text_list = [text]
-            text_list = self.text_tokenizer.tokenize(text)
+            text_list = [text]
+            # text_list = self.text_tokenizer.tokenize(text)
             for tok in tok_list:
                 tokenized_text = []
                 for sub_text in text_list:

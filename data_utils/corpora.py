@@ -27,7 +27,7 @@ from utils import print_rank_0
 # from kss import split_sentences
 import multiprocessing, logging
 
-NUM_PROCESSES = 2  # 100
+NUM_PROCESSES = 8  # 100
 
 
 def punctuation_standardization(string: str):
@@ -145,6 +145,9 @@ class DataReader:
                                 # why ??
                                 if item in ['id', 'metadata']:
                                     continue
+                                # for paragraph in item[self.category]:
+                                #     task_queue.put(paragraph)
+                                # origin
                                 task_queue.put(item)
                         else:
                             for item in items["RECORDS"]:
@@ -528,7 +531,7 @@ class WuDaoCorpus(PromptReader):
         return prompts, texts
 
 
-class KorDataset(PromptReader):
+class KorDataset_json(PromptReader):
     is_json = True
     reserve_punct = True
     split_row = False
@@ -539,9 +542,6 @@ class KorDataset(PromptReader):
         for row in iter(input.get, 'STOP'):
             # read json
             for paragraph in row[self.category]:
-                # split sentences
-                # for sent in split_sentences(paragraph['form'], num_workers=NUM_PROCESSES):
-                    # print(f'sentence - {sent}')
                 prompts, texts = self.process_line(paragraph['form'], tokenizer, tokenize)
                     # print(f'texts - {texts}')
                 for prompt, text in zip(prompts, texts):
@@ -551,7 +551,6 @@ class KorDataset(PromptReader):
     # handling one line not document??
     def process_line(self, data, tokenizer, tokenize):
         # prompt is not implemented
-        
         prompts, texts = [], []
         
         # fix bugs
@@ -563,73 +562,65 @@ class KorDataset(PromptReader):
         return [prompt], texts
 
 
-class NIKL_Daily_conversation(KorDataset):
-    PATH = "/data/sgahn/NIKL_DAILY_CONVERSATION_2020_v1.2"
-    is_json = True
+class KorDataset(PromptReader):
+    is_json=False
     reserve_punct = True  # whether punctuation is in the vocab
-    category = 'utterance'
-    # assert_str = 'set the path for NIKL_DAILY_CONVERSATION'
+    split_row = True
+    def process_line(self, data, tokenizer, tokenize):
+        text = data.strip('\n').strip()
+        if text:
+            prompt, text = self.process_sample("", tokenizer, tokenize), self.process_sample(text, tokenizer, tokenize)
+            return [prompt], [text]
+        else:
+            return [], [] 
+
+
+class Online_Review(KorDataset):
+    PATH = "/data/sgahn/online_review"
+    
+
+class NIKL_Daily_conversation(KorDataset):
+    PATH = "/data/sgahn/NIKL_DAILY_CONVERSATION_2020_v1.2_text"
+    # category = 'utterance'
     
     # based on other classes,,
-    # prompt -> return []
+    # prompt -> return [[]]
     # text -> clean the text
 
 class NIKL_KParlty(KorDataset):
-    PATH ="/data/sgahn/NIKL_KParlty_2021_v1.0"
-    is_json=True
-    reserve_punct = True
-    split_row = False
-    category = 'utterance'
+    PATH ="/data/sgahn/NIKL_KParlty_2021_v1.0_text"
+    # category = 'utterance'
 
 
 class NIKL_Messenger(KorDataset):
-    PATH = "/data/sgahn/NIKL_MESSENGER_v2.0"
-    is_json=True
-    reserve_punct = True
-    split_row = False
-    category = 'utterance'
+    PATH = "/data/sgahn/NIKL_MESSENGER_v2.0_text"
 
 
 class NIKL_Newspaper(KorDataset):
-    PATH = "/data/sgahn/NIKL_NEWSPAPER"
-    is_json=True
-    reserve_punct = True
-    category = 'paragraph'
-    split_row = False
+    PATH = "/data/sgahn/NIKL_NEWSPAPER_text"
+    # category = 'paragraph'
 
 
-class NIKL_Newspaper_2020(NIKL_Newspaper):
-    PATH = "/data/sgahn/NIKL_NEWSPAPER_2020"
-    is_json=True
-    reserve_punct = True
-    category = 'paragraph' 
+class NIKL_Newspaper_2020(KorDataset):
+    PATH = "/data/sgahn/NIKL_NEWSPAPER_2020_text"
 
-class NIKL_Newspaper_2021(NIKL_Newspaper):
-    PATH = "/data/sgahn/NIKL_NEWSPAPER_2021_v1.0"
-    is_json=True
-    reserve_punct = True
-    category = 'paragraph'
+
+class NIKL_Newspaper_2021(KorDataset):
+    PATH = "/data/sgahn/NIKL_NEWSPAPER_2021_v1.0_text"
+
 
 class NIKL_Om(KorDataset):
-    PATH = "/data/sgahn/NIKL_OM_2021_v1.0"
-    is_json=True
-    reserve_punct = True
-    category = 'utterance'
+    PATH = "/data/sgahn/NIKL_OM_2021_v1.0_text"
 
 
 class NIKL_Spoken(KorDataset):
-    PATH = "/data/sgahn/NIKL_SPOKEN"
-    is_json=True
-    reserve_punct = True
-    category = 'utterance'
+    PATH = "/data/sgahn/NIKL_SPOKEN_text"
 
 
 class NIKL_Written(KorDataset):
-    PATH = "/data/sgahn/NIKL_WRITTEN"
-    is_json=True
-    reserve_punct = True
-    category = 'paragraph'
+    PATH = "/data/sgahn/NIKL_WRITTEN_text"
 
+   
 
 NAMED_CORPORA = {
     'wikipedia': wikipedia,
@@ -655,4 +646,5 @@ NAMED_CORPORA = {
     'nikl_om' : NIKL_Om,
     'nikl_spoken': NIKL_Spoken,
     'nikl_written': NIKL_Written,
+    'online_review': Online_Review,
 }

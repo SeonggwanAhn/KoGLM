@@ -173,8 +173,10 @@ class LazyLoader(object):
         elif self.mem_map:
             if is_array:
                 # modify
-                # if self.ends[-1] == 0:
-                if self.ends[-1] == len(self.lens):
+                # if self.ends[-1] == len(self.lens):
+
+                # origin
+                if self.ends[-1] == 0:
                     self.file = np.array([], dtype=array_data_type)
                 else:
                     self.file = np.memmap(self.file, dtype=array_data_type, mode='r', order='C')

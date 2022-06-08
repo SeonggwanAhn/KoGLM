@@ -17,7 +17,7 @@ gpt_options=" \
        --save /data/sgahn/ckpt \
        --train-iters 150000 \
        --resume-dataloader \
-       --train-data nikl_daily nikl_messenger nikl_newspaper nikl_newspaper_2020 nikl_newspaper_2021 nikl_spoken nikl_written nikl_om \
+       --train-data online_review nikl_newspaper nikl_kparlty nikl_daily nikl_newspaper_2020 nikl_messenger nikl_newspaper_2021 nikl_spoken nikl_written nikl_om \
        --tokenizer-type BertWordPieceTokenizer \
        --tokenizer-model-type monologg/koelectra-base-v3-discriminator \
        --split 949,50,1 \

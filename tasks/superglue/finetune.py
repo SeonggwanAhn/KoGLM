@@ -45,6 +45,7 @@ DEFAULT_METRICS = {
     "cluewsc": [("accuracy", accuracy_metric)],
     "cmrc": [("accuracy", accuracy_metric)],
     "nsmc": [("accuracy", accuracy_metric)],
+    "kornli": [("accuracy", accuracy_metric)],
 }
 
 

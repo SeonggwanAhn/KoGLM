@@ -34,7 +34,7 @@ PRETRAINED_VOCAB_ARCHIVE_MAP = {
     'bert-base-multilingual-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-uncased-vocab.txt",
     'bert-base-multilingual-cased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-cased-vocab.txt",
     'bert-base-chinese': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-chinese-vocab.txt",
-	'monologg/koelectra-base-v3-discriminator': './korean_wordpiece/koelectra-vocab.txt'
+	'monologg/koelectra-base-v3-discriminator': '/home/sgahn/KoGLM/korean_wordpiece/koelectra-vocab.txt'
 }
 PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP = {
     'bert-base-uncased': 512,
@@ -209,7 +209,7 @@ class BasicTokenizer(object):
                 token = token.lower()
                 token = self._run_strip_accents(token)
             split_tokens.extend(self._run_split_on_punc(token))
-        
+
         output_tokens = whitespace_tokenize(" ".join(split_tokens))
         return output_tokens
 
@@ -233,8 +233,8 @@ class BasicTokenizer(object):
         start_new_word = True
         output = []
         # problem - in ##Kor, ## is splitted by this logic
-        if '##' in text:
-            return [text]
+        # if '##' in text:
+        #     return [text]
 
         while i < len(chars):
             char = chars[i]
@@ -247,6 +247,7 @@ class BasicTokenizer(object):
                 start_new_word = False
                 output[-1].append(char)
             i += 1
+
         return ["".join(x) for x in output]
 
     def _tokenize_chinese_chars(self, text):

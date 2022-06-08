@@ -53,6 +53,14 @@ def read_tsv(path, **kwargs):
     return pd.read_csv(path, sep='\t', quoting=csv.QUOTE_NONE, dtype=str, na_filter=False, **kwargs)
 
 
+def _read_file(input_file):
+    lines = []
+    with open(input_file, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            lines.append(line.strip())
+    return lines
+
+
 class SuperGlueDataset(Dataset):
 
     def __init__(self, args, task_name, data_dir, seq_length, split, tokenizer, for_train=False,
@@ -1320,13 +1328,10 @@ class NSMCProcessor(DataProcessor):
     # confused it should return verbalizer ??
     def get_labels(self):
         return ["0", "1"]
-
-    
-    
+   
     def get_train_examples(self, data_dir) -> List[InputExample]:
         return self._create_examples(os.path.join(data_dir, "ratings_train.txt"), "train")
 
-    # TODO: implement dev set (none or split train set?)
     def get_dev_examples(self, data_dir, for_train=False):
         return self._create_examples(os.path.join(data_dir, "ratings_test.txt"), "dev")
 
@@ -1336,25 +1341,50 @@ class NSMCProcessor(DataProcessor):
     @staticmethod
     def _create_examples(path:str, set_type: str) -> List[InputExample]:
         examples = list()
-        def _read_file(input_file):
-            lines = []
-            with open(input_file, 'r', encoding='utf-8') as f:
-                for line in f.readlines():
-                    lines.append(line.strip())
-            return lines 
         lines = _read_file(path)
 
         # except metadata line
         for line in lines[1:]:
             document_id, text_a, label = line.split('\t')
-            # confused - need meta??
+            # need meta??
             example = InputExample(guid="%s-%s"%(set_type, document_id), text_a=text_a, label=label)
             examples.append(example)
         return examples
     
 
+class KornliProcessor(DataProcessor):
+    #TODO: make num_choices
+    def get_labels(self):
+        raise ["contradiction", "neutral", "entailment"]
 
-CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc"}
+    def get_train_examples(self, data_dir) -> List[InputExample]:
+        train_examples = list()
+        len_examples = 0
+        for train_file in ["multinli.train.ko.tsv", "snli_1.0_train.ko.tsv"]:
+            train_examples.extend(self._create_examples(os.path.join(data_dir, train_file), "train", len_examples))
+            len_examples += len(train_examples)
+
+        return train_examples
+    
+    def get_dev_examples(self, data_dir, for_train=False):
+        return self._create_examples(os.path.join(data_dir, "xnli.dev.ko.tsv"), "dev")
+
+    def get_test_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, "xnli.test.ko.tsv"), "test")
+
+    @staticmethod
+    def _create_examples(path:str, set_type: str, existing_len: int = 0) -> List[InputExample]:
+        examples = list()
+        lines = _read_file(path)
+
+        for i, line in enumerate(lines[1:]):
+            sent1, sent2, gold_label = line.split('\t')
+            guid = f"{set_type}-{existing_len + i}"
+            example = InputExample(guid=guid, text_a = sent1, text_b = sent2, label=gold_label)
+            examples.append(example)
+        return examples
+
+CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc", 'kornli'}
 MULTI_CHOICE_DATASETS = {"copa", "record"}
 
 PROCESSORS = {
@@ -1390,5 +1420,6 @@ PROCESSORS = {
     "tnews": TNewsProcessor,
     'cluewsc': CLUEWSCProcessor,
     'nsmc': NSMCProcessor,
+    'kornli': KornliProcessor
     # 'cmrc': CMRCProcessor
 }  # type: Dict[str,Callable[[1],DataProcessor]]
