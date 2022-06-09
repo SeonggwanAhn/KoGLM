@@ -1479,6 +1479,10 @@ class KornliPVP(PVP):
             return KornliPVP.VERBALIZER_C[label]
 
 
+# class KorquadPVP(SquadPVP):
+    
+
+
 
 def get_verbalization_ids(word: str, tokenizer, force_single_token: bool) -> Union[int, List[int]]:
     """
@@ -1532,6 +1536,6 @@ PVPS = {
     'tnews': TNewsPVP,
     'cluewsc': CLUEWSCPVP,
     'nsmc': NSMCPVP,
-    'kornli': KornliPVP
-    # 'cmrc': CMRCPVP
+    'kornli': KornliPVP,
+    'korquad': SquadPVP,  # KorquadPVP,
 }

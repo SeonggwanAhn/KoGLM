@@ -1383,6 +1383,16 @@ class KornliProcessor(DataProcessor):
             examples.append(example)
         return examples
 
+
+class KorquadProcessor(SquadProcessor):
+    def get_train_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, "KorQuAD_v1.0_train.json"), "train")
+
+    def get_dev_examples(self, data_dir, for_train=False):
+        return self._create_examples(os.path.join(data_dir, "KorQuAD_v1.0_dev.json"), "dev")
+
+
+
 CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc", 'kornli'}
 MULTI_CHOICE_DATASETS = {"copa", "record"}
 
@@ -1414,11 +1424,10 @@ PROCESSORS = {
     "qnli": QnliProcessor,
     "squad": SquadProcessor,
     "race": RaceProcessor,
-    "squad": SquadProcessor,
     "afqmc": AFQMCProcessor,
     "tnews": TNewsProcessor,
     'cluewsc': CLUEWSCProcessor,
     'nsmc': NSMCProcessor,
-    'kornli': KornliProcessor
-    # 'cmrc': CMRCProcessor
+    'kornli': KornliProcessor,
+    'korquad': KorquadProcessor
 }  # type: Dict[str,Callable[[1],DataProcessor]]

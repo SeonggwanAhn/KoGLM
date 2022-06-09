@@ -150,7 +150,19 @@ class SQuADProcessor:
         self.data_dir = data_dir
         self.tokenizer = tokenizer
 
+    def _get_filename(self, split):
+        if split == "train":
+            return "train.json"
+        elif split == "dev":
+            return "dev.json"
+        elif split == "test":
+            return "test.json"
+        else:
+            raise NotImplementedError(split)
+
     def create_examples(self, split):
+        """
+        # origin code
         if split == "train":
             filename = "train.json"
         elif split == "dev":
@@ -159,6 +171,9 @@ class SQuADProcessor:
             filename = "test.json"
         else:
             raise NotImplementedError(split)
+        """
+
+        filename = self._get_filename(split)
         print_rank_0(f"Creating SQuAD-{split} dataset from {self.data_dir}")
         example_list = []
         idx = 0
@@ -186,6 +201,22 @@ class SQuADProcessor:
                             idx += 1
         print_rank_0(f"Creating {len(example_list)} examples for {split}")
         return example_list
+
+
+class KorQuADProcessor(SQuADProcessor):
+    # this is for KorQuAD-v1.0
+    def __init__(self, data_dir, tokenizer):
+        super().__init__(data_dir, tokenizer)
+
+    def _get_filename(self, split):
+        if split == "train":
+            return "KorQuAD_v1.0_train.json"
+        elif split == "dev":
+            return "KorQuAD_v1.0_dev.json"
+        elif split == "test":
+            return "KorQuAD_v1.0_dev.json"
+        else:
+            raise NotImplementedError(split)
 
 
 class XSumProcessor:
@@ -262,6 +293,8 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             self.processor = SQuADProcessor(self.data_dir, tokenizer)
         elif self.task in ['cmrc']:
             self.processor = CMRCProcessor(self.data_dir, tokenizer)
+        elif self.task in ['korquad']:
+            self.processor = KorQuADProcessor(self.data_dir, tokenizer)
         else:
             raise NotImplementedError(self.task)
         example_list = self.processor.create_examples(split)
@@ -288,7 +321,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             if len(source_tokens) > self.max_src_length - len(prompt):
                 source_tokens = source_tokens[:self.max_src_length - len(prompt)]
             source_tokens = prompt + source_tokens
-        elif self.task == "squad_generation":
+        elif self.task in ["squad_generation", "korquad"]:
             source_text = example.text_a
             target_text, answer = example.meta["question"], example.meta["answer"]
             source_tokens = self.tokenizer.EncodeAsIds(source_text.rstrip() + " Question:").tokenization

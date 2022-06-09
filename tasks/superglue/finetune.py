@@ -46,6 +46,7 @@ DEFAULT_METRICS = {
     "cmrc": [("accuracy", accuracy_metric)],
     "nsmc": [("accuracy", accuracy_metric)],
     "kornli": [("accuracy", accuracy_metric)],
+    "korquad": [("accuracy", accuracy_metric), ("f1", f1_metric)],
 }
 
 
@@ -70,7 +71,7 @@ def metrics_func_provider(args, tokenizer, is_test):
 
     output_func = get_output_func(args.task.lower(), args)
     eval_func = None
-    if args.task.lower() in ['wsc', 'squad'] and args.cloze_eval and not args.wsc_negative:
+    if args.task.lower() in ['wsc', 'squad', 'korquad'] and args.cloze_eval and not args.wsc_negative:
         from tasks.language_model.finetune import classify_evaluate
         eval_func = classify_evaluate
     metric_dict = OrderedDict(DEFAULT_METRICS[args.task.lower()])
@@ -86,7 +87,7 @@ def main(args):
                                   num_prompt_tokens=args.num_prompt_tokens)
     if args.continuous_prompt:
         model_kwargs["spell_length"] = pvp.spell_length
-    if args.task.lower() in ['wsc', 'squad'] and args.cloze_eval and not args.wsc_negative:
+    if args.task.lower() in ['wsc', 'squad', 'korquad'] and args.cloze_eval and not args.wsc_negative:
         from tasks.language_model.finetune import lm_forward_step
         finetune(args, train_valid_datasets_provider, model_kwargs,
                  end_of_epoch_callback_provider=metrics_func_provider, forward_step=lm_forward_step)
