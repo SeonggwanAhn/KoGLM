@@ -1391,7 +1391,25 @@ class KorquadProcessor(SquadProcessor):
     def get_dev_examples(self, data_dir, for_train=False):
         return self._create_examples(os.path.join(data_dir, "KorQuAD_v1.0_dev.json"), "dev")
 
+    @staticmethod
+    def _create_examples(path: str, set_type: str) -> List[InputExample]:
+        examples = []
+        with open(path) as f:
+            data = json.load(f)['data']
 
+        for idx, passage in enumerate(data):
+            for pid, paragraph in enumerate(passage['paragraphs']):
+                context = paragraph['context']
+                for qid, qas in enumerate(paragraph['qas']):
+                    if len(qas['answers']) == 0:
+                        continue
+                    guid = f"{qas["id"]}"
+                    assert len(qas['answers']) == 1
+                    example = InputExample(guid=guid, text_a=context, text_b=qas['question'], label='0', meta={'answer': qas['answers'][0]})
+
+                    examples.append(example)
+
+        return examples
 
 CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc", 'kornli'}
 MULTI_CHOICE_DATASETS = {"copa", "record"}

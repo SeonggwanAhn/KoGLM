@@ -19,7 +19,7 @@ from collections import OrderedDict
 from finetune_glm import finetune
 from tasks.superglue.dataset import SuperGlueDataset, PROCESSORS, get_output_func
 from tasks.superglue.dataset import CLASSIFICATION_DATASETS, MULTI_CHOICE_DATASETS
-from tasks.superglue.evaluate import qa_exact_match, qa_f1, multirc_em
+from tasks.superglue.evaluate import qa_exact_match, qa_f1, multirc_em, korquad_exact_match, korquad_f1
 from tasks.superglue.pvp import PVPS
 from tasks.eval_utils import accuracy_func_provider
 from tasks.eval_utils import accuracy_metric, f1_macro_metric, f1_metric
@@ -47,6 +47,7 @@ DEFAULT_METRICS = {
     "nsmc": [("accuracy", accuracy_metric)],
     "kornli": [("accuracy", accuracy_metric)],
     "korquad": [("accuracy", accuracy_metric), ("f1", f1_metric)],
+    # "korquad": [("EM", korquad_exact_match), ("F1", korquad_f1)],
 }
 
 

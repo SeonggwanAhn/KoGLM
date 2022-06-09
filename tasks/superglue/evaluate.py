@@ -15,6 +15,23 @@ from collections import defaultdict
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
+    
+    def remove_(text):
+        """remove unnecessary punctuation"""
+        """this is for Korean"""
+        text = re.sub("'", " ", text)
+        text = re.sub('"', " ", text)
+        text = re.sub('《', " ", text)
+        text = re.sub('》', " ", text)
+        text = re.sub('<', " ", text)
+        text = re.sub('>', " ", text)
+        text = re.sub('〈', " ", text)
+        text = re.sub('〉', " ", text)
+        text = re.sub("\(", " ", text)
+        text = re.sub("\)", " ", text)
+        text = re.sub("‘", " ", text)
+        text = re.sub("’", " ", text)
+        return text
 
     def remove_articles(text):
         return re.sub(r'\b(a|an|the)\b', ' ', text)
@@ -29,12 +46,35 @@ def normalize_answer(s):
     def lower(text):
         return text.lower()
 
-    return white_space_fix(remove_articles(remove_punc(lower(s))))
+    return white_space_fix(remove_punc(lower(remove_(s))))
 
 
 def f1_score(prediction, ground_truth):
     prediction_tokens = normalize_answer(prediction).split()
     ground_truth_tokens = normalize_answer(ground_truth).split()
+    
+    # F1 by character
+    # This is for Kor
+    prediction_Char = []
+    for tok in prediction_tokens:
+        now = [a for a in tok]
+        prediction_Char.extend(now)
+        
+    ground_truth_Char = []
+    for tok in ground_truth_tokens:
+        now = [a for a in tok]
+        ground_truth_Char.extend(now)
+    
+    common = Counter(prediction_Char) & Counter(ground_truth_Char)
+    num_same = sum(common.values())
+    if num_same == 0:
+        return 0
+
+    precision = 1.0 * num_same / len(prediction_Char)
+    recall = 1.0 * num_same / len(ground_truth_Char)
+    f1 = (2 * precision * recall) / (precision + recall)
+    """
+    # This is for Eng
     common = Counter(prediction_tokens) & Counter(ground_truth_tokens)
     num_same = sum(common.values())
     if num_same == 0:
@@ -42,6 +82,7 @@ def f1_score(prediction, ground_truth):
     precision = 1.0 * num_same / len(prediction_tokens)
     recall = 1.0 * num_same / len(ground_truth_tokens)
     f1 = (2 * precision * recall) / (precision + recall)
+    """
     return f1
 
 
@@ -59,6 +100,21 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
     return max(scores_for_ground_truths)
 
 
+def korquad_evaluate(predictions, labels, examples: List[InputExample], metric):
+    assert len(examples) == len(predictions)
+    score = 0.0
+    for example, prediction in zip(examples, predictions):
+        ans = example.meta['answer']['text']
+        ground_truths = [ans]
+        assert type(ground_truths) == list
+        assert type(prediction) == str
+        if ground_truths:
+            score += metric_max_over_ground_truths(metric, prediction, ground_truths)
+
+    score = 100.0 * score / len(predictions)
+    return score
+
+
 def qa_evaluate(predictions, labels, examples: List[InputExample], metric):
     assert len(examples) == len(predictions)
     score = 0.0
@@ -67,6 +123,7 @@ def qa_evaluate(predictions, labels, examples: List[InputExample], metric):
         prediction = example.meta["candidates"][prediction]
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
+    
     score = 100.0 * score / len(predictions)
     return score
 
@@ -97,3 +154,5 @@ def multirc_em(predictions, labels, examples: List[InputExample]):
 
 qa_exact_match = functools.partial(qa_evaluate, metric=exact_match_score)
 qa_f1 = functools.partial(qa_evaluate, metric=f1_score)
+korquad_exact_match = functools.partial(korquad_evaluate, metric=exact_match_score)
+korquad_f1 = functools.partial(korquad_evaluate, metric=f1_score)
