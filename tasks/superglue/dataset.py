@@ -1403,7 +1403,7 @@ class KorquadProcessor(SquadProcessor):
                 for qid, qas in enumerate(paragraph['qas']):
                     if len(qas['answers']) == 0:
                         continue
-                    guid = f"{qas["id"]}"
+                    guid = f"{qas['id']}"
                     assert len(qas['answers']) == 1
                     example = InputExample(guid=guid, text_a=context, text_b=qas['question'], label='0', meta={'answer': qas['answers'][0]})
 
