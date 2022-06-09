@@ -218,6 +218,35 @@ class KorQuADProcessor(SQuADProcessor):
         else:
             raise NotImplementedError(split)
 
+    def create_examples(self, split):
+        filename = self._get_filename(split)
+        print_rank_0(f"Creating KorQuAD-{split} dataset from {self.data_dir}")
+        example_list = []
+        idx = 0
+        with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
+            dataset = json.load(file)
+            for paragraphs in dataset["data"]:
+                for paragraph in paragraphs['paragraphs']:
+                    context = paragraph['context']
+                    for qa in paragraph['qas']:
+                        question = qa["question"]
+                        answers = {answer["text"] for answer in qa["answers"]}
+                        answer_starts = {answer["text"]: answer["answer_start"] for answer in qa["answers"]}
+                        for answer in answers:
+                            guid = "%s-%s" % (split, idx)
+                            meta = {
+                                "answer_start": answer_starts[answer],
+                                "answer": answer,
+                                "question": question,
+                                "ref": self.tokenizer.DecodeIds(self.tokenizer.EncodeAsIds(question).tokenization)}
+                            example = InputExample(guid=guid, text_a=context, meta=meta)
+                            if idx < 10:
+                                print_rank_0(
+                                    (context.encode('utf-8'), answer.encode('utf-8'), meta["ref"].encode('utf-8')))
+                            example_list.append(example)
+                            idx += 1
+        print_rank_0(f"Creating {len(example_list)} examples for {split}")
+        return example_list
 
 class XSumProcessor:
     def __init__(self, data_dir, tokenizer):
@@ -331,6 +360,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
                 answer_pattern = self.tokenizer.EncodeAsIds(" " + answer).tokenization
 
                 def sub_finder(mylist, pattern):
+                    # check if answer exists in source text
                     matches = []
                     for i in range(len(mylist)):
                         if mylist[i] == pattern[0] and mylist[i:i + len(pattern)] == pattern:
@@ -342,6 +372,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
                     print(f"Answer {answer} not exists in the source text")
                     source_tokens = source_tokens[:max_src_length]
                 else:
+                    # if exists, truncate including answer
                     start_index = max(answer_indices[0] - max_src_length // 2, 0)
                     source_tokens = source_tokens[start_index: start_index + max_src_length]
             source_tokens = [cls_id] + source_tokens + [mask_id] + answer_tokens

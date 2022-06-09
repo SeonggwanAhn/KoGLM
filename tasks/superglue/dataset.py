@@ -1447,5 +1447,6 @@ PROCESSORS = {
     'cluewsc': CLUEWSCProcessor,
     'nsmc': NSMCProcessor,
     'kornli': KornliProcessor,
-    'korquad': KorquadProcessor
+    # comment out for seq2seq
+    # 'korquad': KorquadProcessor
 }  # type: Dict[str,Callable[[1],DataProcessor]]

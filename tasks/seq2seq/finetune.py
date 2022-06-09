@@ -23,6 +23,8 @@ from pretrain_glm import get_batch
 from collections import OrderedDict
 from tasks.seq2seq.dataset import Seq2SeqDataset, BlankLMDataset, ExtractionDataset
 from tasks.seq2seq.evaluate import rouge_metric, DecoderEvaluater, BlankLMEvaluater
+from tasks.superglue.evaluate import korquad_exact_match, korquad_f1
+
 
 global_tokenizer = None
 
@@ -85,15 +87,19 @@ def metrics_func_provider(args, tokenizer, is_test):
     else:
         evaluater = DecoderEvaluater(args, tokenizer)
         eval_func = evaluater.evaluate
-        if args.tokenizer_type == "BertWordPieceTokenizer":
-            dataset = 'cnn_dm'
-        elif args.task.lower() == 'gigaword':
-            dataset = 'gigaword'
+        if args.task.lower() == 'korquad':
+            metric_dict = OrderedDict({"EM": korquad_exact_match, "F1": korquad_f1})
         else:
-            dataset = 'cnn_dm_org'
-        metric_dict = OrderedDict({"rouge-1": functools.partial(rouge_metric, metric="rouge-1", dataset=dataset),
-                                   "rouge-2": functools.partial(rouge_metric, metric="rouge-2", dataset=dataset),
-                                   "rouge-l": functools.partial(rouge_metric, metric="rouge-l", dataset=dataset)})
+            if args.tokenizer_type == "BertWordPieceTokenizer":
+                dataset = 'cnn_dm'
+            elif args.task.lower() == 'gigaword':
+                dataset = 'gigaword'
+            else:
+                dataset = 'cnn_dm_org'
+            metric_dict = OrderedDict({"rouge-1": functools.partial(rouge_metric, metric="rouge-1", dataset=dataset),
+                                       "rouge-2": functools.partial(rouge_metric, metric="rouge-2", dataset=dataset),
+                                       "rouge-l": functools.partial(rouge_metric, metric="rouge-l", dataset=dataset)})
+
 
     def output_func(predictions, examples, output_file):
         with open(output_file + ".hyps", "w", encoding='utf-8') as output:
