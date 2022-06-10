@@ -225,7 +225,8 @@ class KorQuADProcessor(SQuADProcessor):
         idx = 0
         with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
             dataset = json.load(file)
-            for paragraphs in dataset["data"]:
+            # for debug [:50].. all 140
+            for paragraphs in dataset["data"][:50]:
                 for paragraph in paragraphs['paragraphs']:
                     context = paragraph['context']
                     for qa in paragraph['qas']:
@@ -242,7 +243,7 @@ class KorQuADProcessor(SQuADProcessor):
                             example = InputExample(guid=guid, text_a=context, meta=meta)
                             if idx < 10:
                                 print_rank_0(
-                                    (context.encode('utf-8'), answer.encode('utf-8'), meta["ref"].encode('utf-8')))
+                                    (context.encode('utf-8').decode('utf-8'), answer.encode('utf-8').decode('utf-8'), meta["ref"].encode('utf-8').decode('utf-8')))
                             example_list.append(example)
                             idx += 1
         print_rank_0(f"Creating {len(example_list)} examples for {split}")
@@ -352,11 +353,23 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             source_tokens = prompt + source_tokens
         elif self.task in ["squad_generation", "korquad"]:
             source_text = example.text_a
-            target_text, answer = example.meta["question"], example.meta["answer"]
-            source_tokens = self.tokenizer.EncodeAsIds(source_text.rstrip() + " Question:").tokenization
+            # origin code - question generation task
+            # target_text, answer = example.meta["question"], example.meta["answer"]
+            # KoGLM - predict answer
+            question_text = example.meta["question"]
+            question_tokens = self.tokenizer.EncodeAsIds(question_text.rstrip() + " 정답: ").tokenization
+            target_text, answer = example.meta["answer"], example.meta["answer"]
+            
+            source_tokens = self.tokenizer.EncodeAsIds(source_text.rstrip() + " 문제: ").tokenization
             answer_tokens = self.tokenizer.EncodeAsIds(" Answer: " + answer).tokenization
-            if len(source_tokens) > self.max_src_length - len(answer_tokens) - 2:
-                max_src_length = self.max_src_length - len(answer_tokens) - 2
+            # KoGLM
+            # if len(source_tokens) > self.max_src_length - len(answer_tokens) - 2:
+            if len(source_tokens) > self.max_src_length - len(question_tokens) - 2:
+                # if source_tokens more than permitted length
+
+                # KoGLM
+                # max_src_length = self.max_src_length - len(answer_tokens) - 2
+                max_src_length = self.max_src_length - len(question_tokens) - 2
                 answer_pattern = self.tokenizer.EncodeAsIds(" " + answer).tokenization
 
                 def sub_finder(mylist, pattern):
@@ -370,12 +383,19 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
                 answer_indices = sub_finder(source_tokens, answer_pattern)
                 if len(answer_indices) == 0:
                     print(f"Answer {answer} not exists in the source text")
+                    # for debug
+                    # print(f"source_tokens - {source_tokens}")
+                    # print(f"answer_pattern - {answer_pattern}")
+
                     source_tokens = source_tokens[:max_src_length]
                 else:
                     # if exists, truncate including answer
                     start_index = max(answer_indices[0] - max_src_length // 2, 0)
                     source_tokens = source_tokens[start_index: start_index + max_src_length]
-            source_tokens = [cls_id] + source_tokens + [mask_id] + answer_tokens
+            # origin code - question generation task
+            # source_tokens = [cls_id] + source_tokens + [mask_id] + answer_tokens
+            # KoGLM - predict answer task
+            source_tokens = [cls_id] + source_tokens + question_tokens + [mask_id]
         elif self.task in ["cmrc"]:
             mask_id = self.tokenizer.get_command('MASK').Id
             source_text = example.text_a

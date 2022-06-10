@@ -31,6 +31,7 @@ def normalize_answer(s):
         text = re.sub("\)", " ", text)
         text = re.sub("‘", " ", text)
         text = re.sub("’", " ", text)
+        text = re.sub("\[UNK\]", " ", text)
         return text
 
     def remove_articles(text):
@@ -102,12 +103,16 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
 
 def korquad_evaluate(predictions, labels, examples: List[InputExample], metric):
     assert len(examples) == len(predictions)
+    print('Hello this is korquad_evaluate')
     score = 0.0
     for example, prediction in zip(examples, predictions):
-        ans = example.meta['answer']['text']
+        ans = example.meta['answer']
         ground_truths = [ans]
         assert type(ground_truths) == list
         assert type(prediction) == str
+        # debug
+        # print(f'ground_truths - {ground_truths}')
+        # print(f'prediction - {prediction}')
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
 

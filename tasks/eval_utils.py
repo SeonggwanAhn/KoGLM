@@ -78,6 +78,8 @@ def accuracy_func_provider(single_dataset_provider, metric_dict, args, is_test=F
         print_rank_0('calculating metrics ...')
         score_dict = OrderedDict([(key, 0.0) for key in metric_dict]) if isinstance(metric_dict, dict) else {
             metric_dict: 0.0}
+        # debug
+        # print_rank_0(f'score_dict in tasks/eval_utils.py - {score_dict}')
         total = 0
         for name, dataloader in dataloaders:
             example_dict = None
@@ -90,6 +92,8 @@ def accuracy_func_provider(single_dataset_provider, metric_dict, args, is_test=F
                 filename = os.path.join(args.log_dir, name + '.jsonl')
                 output_func(predictions, examples, filename)
             total_count = len(predictions)
+            # debug
+            # print('it came until here...')
             single_dict = {key: metric(predictions, labels, examples) for key, metric in metric_dict.items()}
             output_str = ' > |epoch: {}| metrics for {}: total {}'.format(epoch, name, total_count)
             for key, value in single_dict.items():

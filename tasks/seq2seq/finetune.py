@@ -89,6 +89,7 @@ def metrics_func_provider(args, tokenizer, is_test):
         eval_func = evaluater.evaluate
         if args.task.lower() == 'korquad':
             metric_dict = OrderedDict({"EM": korquad_exact_match, "F1": korquad_f1})
+            print(f'metric_dict in seq2seq/finetune.py- {metric_dict}')
         else:
             if args.tokenizer_type == "BertWordPieceTokenizer":
                 dataset = 'cnn_dm'
