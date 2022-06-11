@@ -226,7 +226,7 @@ class KorQuADProcessor(SQuADProcessor):
         with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
             dataset = json.load(file)
             # for debug [:30].. all 140
-            for paragraphs in dataset["data"][:30]:
+            for paragraphs in dataset["data"]:
                 for paragraph in paragraphs['paragraphs']:
                     context = paragraph['context']
                     for qa in paragraph['qas']:
