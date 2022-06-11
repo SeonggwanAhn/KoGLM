@@ -1,6 +1,6 @@
-DATA_ROOT=/root/data
-CHECKPOINT_PATH="/dataset/c07bd62b/finetune_checkpoints"
-SAVE_PATH=/root/data/finetune_checkpoints
+DATA_ROOT=/data/sgahn/seq2seq
+CHECKPOINT_PATH=/data/sgahn/ckpt
+SAVE_PATH=/data/sgahn/ckpt
 DATESTR=$(date +"%m-%d-%H-%M")
 
 source $1    # Model
