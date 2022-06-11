@@ -226,7 +226,7 @@ class KorQuADProcessor(SQuADProcessor):
         with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
             dataset = json.load(file)
             # for debug [:50].. all 140
-            for paragraphs in dataset["data"][:50]:
+            for paragraphs in dataset["data"]:
                 for paragraph in paragraphs['paragraphs']:
                     context = paragraph['context']
                     for qa in paragraph['qas']:
@@ -357,7 +357,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             # target_text, answer = example.meta["question"], example.meta["answer"]
             # KoGLM - predict answer
             question_text = example.meta["question"]
-            question_tokens = self.tokenizer.EncodeAsIds(question_text.rstrip() + " 정답: ").tokenization
+            question_tokens = self.tokenizer.EncodeAsIds(question_text.rstrip() + " 정답:").tokenization
             target_text, answer = example.meta["answer"], example.meta["answer"]
             
             source_tokens = self.tokenizer.EncodeAsIds(source_text.rstrip() + " 문제: ").tokenization
