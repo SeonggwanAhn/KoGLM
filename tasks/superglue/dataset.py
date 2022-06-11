@@ -1385,6 +1385,11 @@ class KornliProcessor(DataProcessor):
 
 
 class KorquadProcessor(SquadProcessor):
+    
+    @property
+    def variable_num_choices(self):
+        return True
+
     def get_train_examples(self, data_dir):
         return self._create_examples(os.path.join(data_dir, "KorQuAD_v1.0_train.json"), "train")
 
@@ -1396,7 +1401,7 @@ class KorquadProcessor(SquadProcessor):
         examples = []
         with open(path) as f:
             data = json.load(f)['data']
-
+        # debug
         for idx, passage in enumerate(data):
             for pid, paragraph in enumerate(passage['paragraphs']):
                 context = paragraph['context']
@@ -1447,6 +1452,5 @@ PROCESSORS = {
     'cluewsc': CLUEWSCProcessor,
     'nsmc': NSMCProcessor,
     'kornli': KornliProcessor,
-    # comment out for seq2seq
-    # 'korquad': KorquadProcessor
+    'korquad': KorquadProcessor
 }  # type: Dict[str,Callable[[1],DataProcessor]]

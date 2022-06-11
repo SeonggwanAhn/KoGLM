@@ -112,7 +112,7 @@ def korquad_evaluate(predictions, labels, examples: List[InputExample], metric):
         assert type(prediction) == str
         # debug
         # print(f'ground_truths - {ground_truths}')
-        # print(f'prediction - {prediction}')
+        # print(f'prediction - {prediction}, type - {type(prediction)}')
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
 

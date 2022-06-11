@@ -1,5 +1,5 @@
 EXPERIMENT_NAME=${MODEL_TYPE}-korquad
-TASK_NAME=korquad
+TASK_NAME=korquad_extract
 DATA_PATH="/data/sgahn/seq2seq/korquad/"
 
 TRAIN_ARGS="--epochs 10 \
@@ -19,7 +19,10 @@ COMMON_ARGS="--save-interval 10000 \
 TASK_ARGS="--src-seq-length 500 \
            --tgt-seq-length 12 \
            --min-tgt-length 0 \
-           --length-penalty 0.7 \
-           --num-beams 5 \
-           --select-topk \
-           --eval-batch-size 4"
+		   --length-penalty 0.7 \
+		   --num-beams 5 \
+		   --select-topk \
+		   --eval-batch-size 4"
+
+
+

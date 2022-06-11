@@ -46,8 +46,8 @@ DEFAULT_METRICS = {
     "cmrc": [("accuracy", accuracy_metric)],
     "nsmc": [("accuracy", accuracy_metric)],
     "kornli": [("accuracy", accuracy_metric)],
-    "korquad": [("accuracy", accuracy_metric), ("f1", f1_metric)],
-    # "korquad": [("EM", korquad_exact_match), ("F1", korquad_f1)],
+    # "korquad": [("accuracy", accuracy_metric), ("f1", f1_metric)],
+    "korquad": [("EM", korquad_exact_match), ("F1", korquad_f1)],
 }
 
 
