@@ -229,6 +229,8 @@ def _train(model, optimizer, lr_scheduler, forward_step,
                 data = (batch, train_dataloader[1])
             else:
                 data = batch
+            # debug
+            # print(f'data: {data}')
             lm_loss, skipped_iter, _ = train_step(data, model, optimizer, lr_scheduler, args,
                                                   timers, forward_step_func=forward_step, single_step=True)
             args.iteration += 1
@@ -461,7 +463,7 @@ if __name__ == '__main__':
     elif args.task.lower() in ['lambda', 'wikitext', 'language_model']:
         from tasks.language_model.finetune import main
     elif args.task.lower() in ['cnn_dm', 'cnn_dm_original', 'gigaword', 'blank', 'squad_generation', 'xsum',
-                               'extraction', 'cmrc', 'korquad']:
+                               'extraction', 'cmrc', 'korquad_extract']:
         from tasks.seq2seq.finetune import main
     else:
         raise NotImplementedError('Task {} is not implemented.'.format(args.task))

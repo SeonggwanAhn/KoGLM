@@ -87,7 +87,7 @@ def metrics_func_provider(args, tokenizer, is_test):
     else:
         evaluater = DecoderEvaluater(args, tokenizer)
         eval_func = evaluater.evaluate
-        if args.task.lower() == 'korquad':
+        if args.task.lower() == 'korquad_extract':
             metric_dict = OrderedDict({"EM": korquad_exact_match, "F1": korquad_f1})
             print(f'metric_dict in seq2seq/finetune.py- {metric_dict}')
         else:
@@ -111,7 +111,7 @@ def metrics_func_provider(args, tokenizer, is_test):
             for example in examples:
                 output.write(example.meta["ref"])
                 output.write("\n")
-        if args.task.lower() in ['squad_generation', 'korquad']:
+        if args.task.lower() in ['squad_generation', 'korquad_extract']:
             with open(output_file + ".source", "w", encoding='utf-8') as output:
                 for example in examples:
                     output.write(example.text_a.replace("\n", " ") + " Answer: " + example.meta["answer"])
@@ -125,7 +125,7 @@ def main(args):
     if args.src_seq_length > args.max_position_embeddings:
         args.max_position_embeddings = args.src_seq_length
     if args.task.lower() in ['cnn_dm', 'cnn_dm_original', 'gigaword', 'blank', 'squad_generation', 'xsum',
-                             'extraction', 'cmrc', 'korquad']:
+                             'extraction', 'cmrc', 'korquad_extract']:
         finetune(args, train_valid_datasets_provider, {}, end_of_epoch_callback_provider=metrics_func_provider,
                  forward_step=seq2seq_forward_step)
     else:

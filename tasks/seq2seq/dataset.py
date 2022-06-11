@@ -225,8 +225,8 @@ class KorQuADProcessor(SQuADProcessor):
         idx = 0
         with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
             dataset = json.load(file)
-            # for debug [:50].. all 140
-            for paragraphs in dataset["data"]:
+            # for debug [:30].. all 140
+            for paragraphs in dataset["data"][:30]:
                 for paragraph in paragraphs['paragraphs']:
                     context = paragraph['context']
                     for qa in paragraph['qas']:
@@ -323,7 +323,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             self.processor = SQuADProcessor(self.data_dir, tokenizer)
         elif self.task in ['cmrc']:
             self.processor = CMRCProcessor(self.data_dir, tokenizer)
-        elif self.task in ['korquad']:
+        elif self.task in ['korquad_extract']:
             self.processor = KorQuADProcessor(self.data_dir, tokenizer)
         else:
             raise NotImplementedError(self.task)
@@ -351,7 +351,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             if len(source_tokens) > self.max_src_length - len(prompt):
                 source_tokens = source_tokens[:self.max_src_length - len(prompt)]
             source_tokens = prompt + source_tokens
-        elif self.task in ["squad_generation", "korquad"]:
+        elif self.task in ["squad_generation", "korquad_extract"]:
             source_text = example.text_a
             # origin code - question generation task
             # target_text, answer = example.meta["question"], example.meta["answer"]
