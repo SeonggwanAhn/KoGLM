@@ -16,8 +16,8 @@ COMMON_ARGS="--save-interval 10000 \
              --eval-iters 100 \
              --eval-epoch 10"
 
-TASK_ARGS="--src-seq-length 500 \
-           --tgt-seq-length 12 \
+TASK_ARGS="--src-seq-length 464 \
+           --tgt-seq-length 48 \
            --min-tgt-length 0 \
 		   --length-penalty 0.7 \
 		   --num-beams 5 \
