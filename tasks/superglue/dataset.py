@@ -1416,7 +1416,41 @@ class KorquadProcessor(SquadProcessor):
 
         return examples
 
-CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc", 'kornli'}
+
+class YnatProcessor(DataProcessor):
+    
+    label_dict = {
+        "IT과학": "0",
+        "경제": "1",
+        "사회": "2", 
+        "생활문화": "3",
+        "세계": "4",
+        "스포츠": "5",
+        "정치": "6"
+    }
+
+    def get_labels(self):
+        return ["0", "1", "2", "3", "4", "5", "6"]  
+
+    def get_train_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, "ynat-v1.1_train.json"), "train")
+
+    def get_dev_examples(self, data_dir, for_train=False):
+        return self._create_examples(os.path.join(data_dir, "ynat-v1.1_dev.json"), "dev")
+
+    @staticmethod
+    def _create_examples(path: str, set_type: str) -> List[InputExample]:
+        examples = []
+        with open(path) as f:
+            data = json.load(f)
+        for col in data:
+            example = InputExample(guid=col["guid"], text_a=col["title"], label=label_dict[col["label"]])
+            examples.append(example)
+        return examples
+
+
+
+CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc"}
 MULTI_CHOICE_DATASETS = {"copa", "record"}
 
 PROCESSORS = {
@@ -1452,5 +1486,6 @@ PROCESSORS = {
     'cluewsc': CLUEWSCProcessor,
     'nsmc': NSMCProcessor,
     'kornli': KornliProcessor,
-    'korquad': KorquadProcessor
+    'korquad': KorquadProcessor,
+    'ynat': YnatProcessor,
 }  # type: Dict[str,Callable[[1],DataProcessor]]

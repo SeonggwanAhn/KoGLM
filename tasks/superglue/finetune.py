@@ -48,6 +48,7 @@ DEFAULT_METRICS = {
     "kornli": [("accuracy", accuracy_metric)],
     # "korquad": [("accuracy", accuracy_metric), ("f1", f1_metric)],
     "korquad": [("EM", korquad_exact_match), ("F1", korquad_f1)],
+    "ynat": [("f1-macro", f1_macro_metric)],
 }
 
 

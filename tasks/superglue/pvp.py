@@ -1480,8 +1480,40 @@ class KornliPVP(PVP):
 
 
 # class KorquadPVP(SquadPVP):
-    
+class YnatPVP(PVP): 
+    VERBALIZER = {
+        "0": [" IT과학"],
+        "1": [" 경제"],
+        "2": [" 사회"],
+        "3": [" 생활문화"],
+        "4": [" 세계"],
+        "5": [" 스포츠"],
+        "6": [" 정치"]
+    }
 
+    @staticmethod
+    def available_patterns():
+        return [0, 1, 2, 3, 4]
+
+    def get_parts(self, example: InputExample) -> FilledPattern:
+
+        text_a = self.shortenable(example.text_a)
+
+        if self.pattern_id == 0:
+            return [[self.mask], ':', text_a], []
+        elif self.pattern_id == 1:
+            return [text_a, ' 주제:', [self.mask]], []
+        elif self.pattern_id == 2:
+            return ['뉴스 "', text_a, '"는 (IT과학, 경제, 사회, 생활문화, 세계, 스포츠, 정치) 중', [self.mask], '로 분류된다.'], []
+        elif self.pattern_id == 3:
+            return ['뉴스 "', text_a, '" 의 주제는', [self.mask], "이다."], []
+        elif self.pattern_id == 4:
+            return ['제목: ', text_a, ' 문제: 이 제목은 어느 항목인가?', ' 정답(IT과학, 경제, 사회, 생활문화, 세계, 스포츠, 정치):', [self.mask]], []
+        else:
+            raise ValueError("No pattern implemented for id {}".format(self.pattern_id)) 
+
+    def verbalize(self,label) -> List[str]:
+        return YnatPVP.VERBALIZER[label]
 
 
 def get_verbalization_ids(word: str, tokenizer, force_single_token: bool) -> Union[int, List[int]]:
@@ -1538,4 +1570,5 @@ PVPS = {
     'nsmc': NSMCPVP,
     'kornli': KornliPVP,
     'korquad': SquadPVP,  # KorquadPVP,
+    'ynat': YnatPVP,
 }
