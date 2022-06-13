@@ -1491,6 +1491,10 @@ class YnatPVP(PVP):
         "6": [" 정치"]
     }
 
+    @property
+    def is_multi_token(self):
+        return True
+
     @staticmethod
     def available_patterns():
         return [0, 1, 2, 3, 4]

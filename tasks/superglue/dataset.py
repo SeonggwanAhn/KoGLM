@@ -1444,7 +1444,7 @@ class YnatProcessor(DataProcessor):
         with open(path) as f:
             data = json.load(f)
         for col in data:
-            example = InputExample(guid=col["guid"], text_a=col["title"], label=label_dict[col["label"]])
+            example = InputExample(guid=col["guid"], text_a=col["title"], label=YnatProcessor.label_dict[col["label"]])
             examples.append(example)
         return examples
 
