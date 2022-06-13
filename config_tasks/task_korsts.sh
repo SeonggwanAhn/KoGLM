@@ -3,7 +3,7 @@ TASK_NAME=korsts
 DATA_PATH="${DATA_ROOT}/klue-sts-v1.1"
 MAX_SEQ_LEN=256
 
-LR_SINGLE=3e-5
+LR_SINGLE=2e-5
 EPOCH_SINGLE=12
 
 TRAIN_ARGS="--lr-decay-style linear \
