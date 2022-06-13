@@ -1349,9 +1349,36 @@ class NSMCProcessor(DataProcessor):
             example = InputExample(guid="%s-%s"%(set_type, document_id), text_a=text_a, label=label)
             examples.append(example)
         return examples
-    
+
 
 class KornliProcessor(DataProcessor):
+    #TODO: make num_choices
+    def get_labels(self):
+        return ["contradiction", "neutral", "entailment"]
+
+    def get_train_examples(self, data_dir) -> List[InputExample]:
+        return self._create_examples(os.path.join(data_dir, "klue-nli-v1.1_train.json"), "train")
+    
+    def get_dev_examples(self, data_dir, for_train=False):
+        return self._create_examples(os.path.join(data_dir, "klue-nli-v1.1_dev.json"), "dev")
+
+    def get_test_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, "klue-nli-v1.1_dev.json"), "test")
+
+    @staticmethod
+    def _create_examples(path:str, set_type: str) -> List[InputExample]:
+        examples = list()
+        with open(path) as f:
+            data = json.load(f)
+
+        for col in data:
+            example = InputExample(guid=col["guid"], text_a = col["premise"], text_b = col["hypothesis"], label=col["gold_label"])
+            examples.append(example)
+        return examples
+
+
+
+class KornliProcessor_Kakao(DataProcessor):
     #TODO: make num_choices
     def get_labels(self):
         return ["contradiction", "neutral", "entailment"]
