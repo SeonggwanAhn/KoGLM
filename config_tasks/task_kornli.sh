@@ -3,7 +3,7 @@ TASK_NAME=kornli
 DATA_PATH="${DATA_ROOT}/klue-nli-v1.1"
 MAX_SEQ_LEN=256
 
-LR_SINGLE=1e-5
+LR_SINGLE=2e-5
 EPOCH_SINGLE=50
 
 TRAIN_ARGS="--lr-decay-style linear \
