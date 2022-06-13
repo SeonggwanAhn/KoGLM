@@ -1476,6 +1476,28 @@ class YnatProcessor(DataProcessor):
         return examples
 
 
+class KorstsProcessor(DataProcessor):
+    def get_labels(self):
+        return ["0", "1"]
+
+    def get_train_examples(self, data_dir):
+        return self._create_examples(os.path.join(data_dir, "klue-sts-v1.1_train.json"), "train")
+
+    def get_dev_examples(self, data_dir, for_train=False):
+        return self._create_examples(os.path.join(data_dir, "klue-sts-v1.1_dev.json"), "dev")
+
+    @staticmethod
+    def _create_examples(path: str, set_type: str) -> List[InputExample]:
+        examples = []
+        with open(path) as f:
+            data = json.load(f)
+        for col in data:
+            example = InputExample(guid=col["guid"], text_a=col["sentence1"], text_b=col["sentence2"], label=str(col["labels"]["binary-label"]))
+            examples.append(example)
+        return examples
+
+
+
 
 CLASSIFICATION_DATASETS = {"wic", "rte", "cb", "boolq", "multirc", "wsc", "nsmc"}
 MULTI_CHOICE_DATASETS = {"copa", "record"}
@@ -1515,4 +1537,5 @@ PROCESSORS = {
     'kornli': KornliProcessor,
     'korquad': KorquadProcessor,
     'ynat': YnatProcessor,
+    'korsts': KorstsProcessor,
 }  # type: Dict[str,Callable[[1],DataProcessor]]

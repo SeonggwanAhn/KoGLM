@@ -1520,6 +1520,42 @@ class YnatPVP(PVP):
         return YnatPVP.VERBALIZER[label]
 
 
+class KorstsPVP(PVP):
+    VERBALIZER_A = {
+        "0": "유사한",
+        "1": "다른"
+    }
+
+    VERBALIZER_B = {
+        "0": "맞다",
+        "1": "아니다"
+    }
+
+
+    @staticmethod
+    def available_patterns():
+        return [0, 1, 2, 3, 4]
+
+    def get_parts(self, example: InputExample) -> FilledPattern:
+        text_a = self.shortenable(example.text_a)
+        text_b = self.shortenable(example.text_b)
+
+        if self.pattern_id == 0:
+            return ["'"text_a, "'와 '", text_b, "'는 의미가 ", [self.mask], " 문장이다."], []
+        elif self.pattern_id == 1:
+            return ['문장1: ', text_a, ' 문장2: ', text_b, ' 문장 1,2의  의미가 유사한가? ', [self.mask]], []
+        elif self.pattern_id == 2:
+            return ['문제: 예문이 "', text_a, '" 와 의미적으로 유사한지 구별하시오.', '예문:"', text_b, '" 정답: ', [self.mask]], []
+        else:
+            raise ValueError("No pattern implemented for id {}".format(self.pattern_id)) 
+
+    def verbalize(self,label) -> List[str]:
+        if self.pattern_id == 0:
+            return KorstsPVP.VERBALIZER_A[label]
+        elif self.pattern_id in [1, 2]:
+            return KorstsPVP.VERBALIZER_B[label]
+
+
 def get_verbalization_ids(word: str, tokenizer, force_single_token: bool) -> Union[int, List[int]]:
     """
     Get the token ids corresponding to a verbalization
@@ -1575,4 +1611,5 @@ PVPS = {
     'kornli': KornliPVP,
     'korquad': SquadPVP,  # KorquadPVP,
     'ynat': YnatPVP,
+    'korsts': KorstsPVP,
 }
