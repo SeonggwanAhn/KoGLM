@@ -1454,7 +1454,7 @@ class KornliPVP(PVP):
             parts_a, parts_b = ["문장 ", "'", sent_a, "'", "와 ", "문장 ", "'", sent_b, "'", "는 ", [self.mask], "이다."], []
         
         elif self.pattern_id == 1:
-            parts_a, parts_b = [sent_a, "이 때, ", sent_b, "는 ", [self.mask], "이다."], []
+            parts_a, parts_b = [sent_a, None, "이 때, ", sent_b, None, "는 ", [self.mask], None, "이다."], []
 
         elif self.pattern_id == 2:
             parts_a, parts_b = ["전제:", sent_a, " 이 때, ", sent_b, "는 ", [self.mask], "이다."], []
