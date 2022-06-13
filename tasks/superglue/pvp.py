@@ -1541,7 +1541,7 @@ class KorstsPVP(PVP):
         text_b = self.shortenable(example.text_b)
 
         if self.pattern_id == 0:
-            return ["'"text_a, "'와 '", text_b, "'는 의미가 ", [self.mask], " 문장이다."], []
+            return ["'", text_a, "'와 '", text_b, "'는 의미가 ", [self.mask], " 문장이다."], []
         elif self.pattern_id == 1:
             return ['문장1: ', text_a, ' 문장2: ', text_b, ' 문장 1,2의  의미가 유사한가? ', [self.mask]], []
         elif self.pattern_id == 2:
