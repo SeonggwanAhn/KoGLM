@@ -2,6 +2,10 @@ EXPERIMENT_NAME=${MODEL_TYPE}-korquad
 TASK_NAME=korquad_extract
 DATA_PATH="/data/sgahn/seq2seq/korquad/"
 
+LR_SINGLE=1e-5
+EPOCH_SINGLE=10
+BATCH_SINGLE=12
+
 TRAIN_ARGS="--epochs 12 \
             --batch-size 8 \
             --lr 2e-5 \
