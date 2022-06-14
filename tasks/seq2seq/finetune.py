@@ -89,22 +89,23 @@ def metrics_func_provider(args, tokenizer, is_test):
     else:
         evaluater = DecoderEvaluater(args, tokenizer)
         eval_func = evaluater.evaluate
-        if args.task.lower() == 'korquad_answer':
-            metric_dict = {"EM": korquad_exact_match, "F1": korquad_f1}
-            print(f'metric_dict in seq2seq/finetune.py- {metric_dict}')
+        
+        if args.tokenizer_type == "BertWordPieceTokenizer":
+            dataset = 'cnn_dm'
+        elif args.task.lower() == 'gigaword':
+            dataset = 'gigaword'
         else:
-            if args.tokenizer_type == "BertWordPieceTokenizer":
-                dataset = 'cnn_dm'
-            elif args.task.lower() == 'gigaword':
-                dataset = 'gigaword'
-            else:
-                dataset = 'cnn_dm_org'
+            dataset = 'cnn_dm_org'
         if args.task.lower() in ['squad', 'squad_v1']:
             metric_dict = {"EM": squad_exact_match, "F1": squad_f1}
         else:
             metric_dict = OrderedDict({"rouge-1": functools.partial(rouge_metric, metric="rouge-1", dataset=dataset),
                                        "rouge-2": functools.partial(rouge_metric, metric="rouge-2", dataset=dataset),
                                        "rouge-l": functools.partial(rouge_metric, metric="rouge-l", dataset=dataset)})
+
+        if args.task.lower() == 'korquad_answer':
+            metric_dict = {"EM": korquad_exact_match, "F1": korquad_f1}
+            print(f'metric_dict in seq2seq/finetune.py- {metric_dict}')
 
 
     def output_func(predictions, examples, output_file):

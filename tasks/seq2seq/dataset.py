@@ -430,13 +430,15 @@ class KorQuADAnswerProcessor:
         self.tokenizer = tokenizer
         self.max_src_length = max_src_length
         # necessary when Using KorQuAD v2
-        # self.task = args.task
+        self.task = args.task
         self.args = args
         import transformers
         tokenizer_model_type = self.args.tokenizer_model_type
         if tokenizer_model_type == 'roberta':
             tokenizer_model_type = 'roberta-large'
         os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        ## WARNING - Make sure huggingface vocab is same as local vocab!!
+        #TODO: modify
         self.transformer_tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer_model_type)
 
     def create_examples(self, split):

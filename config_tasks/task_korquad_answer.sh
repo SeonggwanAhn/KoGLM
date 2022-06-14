@@ -1,6 +1,6 @@
 TASK_NAME=korquad_answer
 EXPERIMENT_NAME=${MODEL_TYPE}-${TASK_NAME}
-DATA_PATH="/data/sgahn/seq2seq2/korquad"
+DATA_PATH="/data/sgahn/seq2seq/korquad"
 
 LR_SINGLE=1e-5
 EPOCH_SINGLE=10
