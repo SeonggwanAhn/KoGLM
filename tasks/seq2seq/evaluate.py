@@ -215,6 +215,28 @@ def squad_fix_tokenization(text):
     return text
 
 
+def korquad_fix_tokenization(text):
+    text = text.replace(" - ", "-")
+    text = text.replace(" \u2013 ", "\u2013")
+    text = text.replace(" · ", "·") 
+    text = re.sub(r"\b' s\b", "'s", text)
+    tokens = text.split()
+    i = 0
+    while i < len(tokens):
+        if tokens[i] in [",", ".", ":"] and i > 0 and i+1 < len(tokens):
+            if tokens[i - 1][-1].isdigit() and tokens[i + 1][0].isdigit():
+                if tokens[i] == ',' and len(tokens[i + 1]) > 3:
+                    pass
+                else:
+                    tokens[i - 1] = tokens[i - 1] + tokens[i] + tokens[i + 1]
+                    tokens = tokens[:i] + tokens[i+2:]
+                    i -= 1
+        i += 1
+    text = ' '.join(tokens)
+    return text
+
+
+
 def squad_decode(example, prediction, tokenizer):
     text = tokenizer.DecodeIds(prediction)
     if text.replace(' ', '').lower() == 'n/a':
@@ -243,6 +265,7 @@ def korquad_decode(example, prediction, tokenizer):
             s = token_to_char[i][0]
             t = token_to_char[i + len(prediction) - 1][1]
             return context[s:t]
+    text = korquad_fix_tokenization(text)
     return text
 
 
