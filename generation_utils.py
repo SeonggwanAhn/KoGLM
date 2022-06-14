@@ -288,7 +288,7 @@ class BeamSearchScorer(BeamScorer):
         for i, beam_hyp in enumerate(self._beam_hyps):
             sorted_hyps = sorted(beam_hyp.beams, key=lambda x: x[0])
             for j in range(self.num_beam_hyps_to_keep):
-                score, best_hyp, mems = sorted_hyps.pop()[1:]
+                score, best_hyp, mems = sorted_hyps.pop()
                 sent_lengths[self.num_beam_hyps_to_keep * i + j] = len(best_hyp)
                 best.append((best_hyp, mems, score))
 
