@@ -11,7 +11,7 @@ from tasks.data_utils import InputExample
 from typing import List
 import functools
 from collections import defaultdict
-
+import unidecode
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
@@ -46,6 +46,7 @@ def normalize_answer(s):
 
     def lower(text):
         return text.lower()
+        # return unidecode.unidecode(text.lower())
 
     return white_space_fix(remove_punc(lower(remove_(s))))
 
@@ -85,6 +86,35 @@ def f1_score(prediction, ground_truth):
     f1 = (2 * precision * recall) / (precision + recall)
     """
     return f1
+
+
+def squad_evaluate(predictions, labels, examples, metric):
+    assert len(examples) == len(predictions)
+    score = 0.0
+    idx2predictions = {}
+    idx2ground_truths = {}
+    for example, prediction in zip(examples, predictions):
+        idx = example.idx
+        if idx not in idx2predictions:
+            idx2predictions[idx] = []
+            idx2ground_truths[idx] = example.meta["answers"]
+        idx2predictions[idx].append(prediction)
+    # assert len(predictions) == len(idx2predictions)
+    for idx, predictions in idx2predictions.items():
+        prediction = 'N/A'
+        for i in range(len(predictions)):
+            prediction = predictions[i]
+            if prediction.lower().replace(' ', '') == 'n/a':
+                prediction = 'N/A'
+            else:
+                break
+        ground_truths = idx2ground_truths[idx]
+        if len(ground_truths) == 1 and ground_truths[0] == 'N/A':
+            score += (prediction == 'N/A')
+        else:
+            score += metric_max_over_ground_truths(metric, prediction, ground_truths)
+    score = 100.0 * score / len(idx2predictions)
+    return score
 
 
 def exact_match_score(prediction, ground_truth):
@@ -161,3 +191,5 @@ qa_exact_match = functools.partial(qa_evaluate, metric=exact_match_score)
 qa_f1 = functools.partial(qa_evaluate, metric=f1_score)
 korquad_exact_match = functools.partial(korquad_evaluate, metric=exact_match_score)
 korquad_f1 = functools.partial(korquad_evaluate, metric=f1_score)
+squad_exact_match = functools.partial(squad_evaluate, metric=exact_match_score)
+squad_f1 = functools.partial(squad_evaluate, metric=f1_score)

@@ -1444,6 +1444,10 @@ class KornliPVP(PVP):
         "neutral": ["모르겠다"]
     }
 
+    @property
+    def spell_length(self):
+        return self.num_prompt_tokens + self.prefix_prompt
+
     @staticmethod
     def available_patterns():
         return [0, 1, 2, 3, 4]

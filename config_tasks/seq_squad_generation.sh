@@ -1,8 +1,8 @@
-EXPERIMENT_NAME=${MODEL_TYPE}-korquad
-TASK_NAME=korquad_extract
-DATA_PATH="/data/sgahn/seq2seq/korquad/"
+EXPERIMENT_NAME=${MODEL_TYPE}-squad
+TASK_NAME=squad_generation
+DATA_PATH="/dataset/c07bd62b/nqg/raw"
 
-TRAIN_ARGS="--epochs 12 \
+TRAIN_ARGS="--epochs 10 \
             --batch-size 8 \
             --lr 2e-5 \
             --lr-decay-style linear \
@@ -14,15 +14,12 @@ COMMON_ARGS="--save-interval 10000 \
              --log-interval 50 \
              --eval-interval 1000 \
              --eval-iters 100 \
-             --eval-epoch 2"
+             --eval-epoch 10"
 
 TASK_ARGS="--src-seq-length 464 \
            --tgt-seq-length 48 \
            --min-tgt-length 0 \
-		   --length-penalty 0.7 \
-		   --num-beams 5 \
-		   --select-topk \
-		   --eval-batch-size 4"
-
-
-
+           --length-penalty 0.7 \
+           --num-beams 5 \
+           --select-topk \
+           --eval-batch-size 4"
