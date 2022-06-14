@@ -591,7 +591,7 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
         elif self.task in ['korquad_extract']:
             self.processor = KorQuADGenerationProcessor(self.data_dir, tokenizer)
         elif self.task in ['korquad_answer']:
-            self.processor = KorQuADAnswerProcessor(self.data_dir, tokenizer)
+            self.processor = KorQuADAnswerProcessor(self.data_dir, tokenizer, self.max_src_length, args)
         else:
             raise NotImplementedError(self.task)
         example_list = self.processor.create_examples(split)
