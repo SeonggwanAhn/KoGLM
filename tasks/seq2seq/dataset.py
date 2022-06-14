@@ -405,12 +405,10 @@ class KorQuADGenerationProcessor(SQuADGenerationProcessor):
                     context = paragraph['context']
                     for qa in paragraph['qas']:
                         question = qa["question"]
-                        answers = {answer["text"] for answer in qa["answers"]}
-                        answer_starts = {answer["text"]: answer["answer_start"] for answer in qa["answers"]}
+                        answers = {answer["text"] for answer in qa["answers"]} if split != 'test' else {"FAKE_ANSWER"}
                         for answer in answers:
                             guid = "%s-%s" % (split, idx)
                             meta = {
-                                "answer_start": answer_starts[answer],
                                 "answer": answer,
                                 "question": question,
                                 "ref": self.tokenizer.DecodeIds(self.tokenizer.EncodeAsIds(question).tokenization)}
@@ -584,7 +582,6 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
         elif self.task in ["xsum"]:
             self.processor = XSumProcessor(self.data_dir, tokenizer)
         elif self.task in ["squad_generation"]:
-            self.processor = SQuADProcessor(self.data_dir, tokenizer)
             self.processor = SQuADGenerationProcessor(self.data_dir, tokenizer)
         elif self.task in ["squad", "squad_v1"]:
             self.processor = SQuADProcessor(self.data_dir, tokenizer, self.max_src_length, args)

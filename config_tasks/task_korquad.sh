@@ -1,4 +1,4 @@
-EXPERIMENT_NAME=${MODEL_TYPE}-korquad
+EXPERIMENT_NAME=${MODEL_TYPE}-korquad_extract
 TASK_NAME=korquad_extract
 DATA_PATH="/data/sgahn/seq2seq/korquad/"
 

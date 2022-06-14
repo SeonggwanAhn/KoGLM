@@ -35,10 +35,10 @@ def lm_forward_step(data, model, args, timers, mems, eval_metric=None):
     # Get the batch.
     if timers is not None:
         timers('batch generator').start()
-     try:
-         data = next(data)
-     except BaseException:
-         data = data
+    try:
+        data = next(data)
+    except BaseException:
+        data = data
 
     if 'mask' in data:
         # finetune SQuAD

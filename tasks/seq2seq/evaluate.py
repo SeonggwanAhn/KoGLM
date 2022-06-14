@@ -179,9 +179,9 @@ def rouge_metric(predictions, labels, examples, metric="rouge-1", duplicate_rate
         pred_list.append(line)
     if torch.distributed.get_rank() == 0:
         import json
-        with open("./results.json", "w") as output:
+        with open("./results.json", "w", encoding='utf-8') as output:
             for ref, pred in zip(ref_list, pred_list):
-                output.write(json.dumps({"ref": ref, "pred": pred}) + "\n")
+                output.write(json.dumps({"ref": ref, "pred": pred}, ensure_ascii=False) + "\n")
     scorer = rouge_scorer.RougeScorer([metric_dict[metric]], use_stemmer=True)
     scores = [scorer.score(pred, ref) for pred, ref in zip(pred_list, ref_list)]
     scores = [score[metric_dict[metric]].fmeasure for score in scores]
@@ -386,6 +386,8 @@ class DecoderEvaluater:
                 tokens, _, scores = beam_scorer.finalize(tokens, beam_scores, next_tokens, next_indices,
                                                          eos_token_id=self.end_token, pad_token_id=self.pad_token)             
                 uid_list = data['uid']
+                if isinstance(uid_list, torch.Tensor):
+                    uid_list = uid_list.cpu().numpy().tolist()
                 predictions = []
                 for i, text in enumerate(tokens.tolist()):
                     text = [token for token in text if token not in [self.end_token, self.pad_token]]
@@ -394,12 +396,13 @@ class DecoderEvaluater:
                         example = example_dict[uid]
                         text = squad_decode(example, text, self.tokenizer)
                     elif args.task == 'korquad_answer':
+                        uid = uid_list[i]
+                        example = example_dict[uid]
                         text = korquad_decode(example, text, self.tokenizer)
                     else:
                         text = self.tokenizer.DecodeIds(text)
                     predictions.append(text)
-                if isinstance(uid_list, torch.Tensor):
-                    uid_list = uid_list.cpu().numpy().tolist()
+                
                 for uid, prediction in zip(uid_list, predictions):
                     local_predictions[uid] = prediction
                 if (idx + 1) % args.log_interval == 0:
