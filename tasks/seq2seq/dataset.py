@@ -405,7 +405,7 @@ class KorQuADGenerationProcessor(SQuADGenerationProcessor):
                     context = paragraph['context']
                     for qa in paragraph['qas']:
                         question = qa["question"]
-                        answers = {answer["text"] for answer in qa["answers"]} if split != 'test' else {"FAKE_ANSWER"}
+                        answers = {answer["text"] for answer in qa["answers"]}
                         for answer in answers:
                             guid = "%s-%s" % (split, idx)
                             meta = {
