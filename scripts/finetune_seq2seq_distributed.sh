@@ -12,13 +12,16 @@ DISTRIBUTED_ARGS="--nproc_per_node ${N_GPU} --nnodes 1 --node_rank 0 --master_ad
 TOKENIZERS_PARALLELISM=false
 
 EXPERIMENT_NAME=${EXPERIMENT_NAME}-${DATESTR}
-python -m torch.distributed.launch ${DISTRIBUTED_ARGS} finetune_glm.py \
+python -m torch.distributed.launch $DISTRIBUTED_ARGS finetune_glm.py \
        --finetune \
        --experiment-name ${EXPERIMENT_NAME} \
        --task ${TASK_NAME} \
        --data-dir ${DATA_PATH} \
        --save ${CHECKPOINT_PATH} \
        --checkpoint-activations \
+       --batch-size ${BATCH_SINGLE} \
+       --epochs ${EPOCH_SINGLE} \
+       --lr ${LR_SINGLE}
        $MODEL_ARGS \
        $TRAIN_ARGS \
        $COMMON_ARGS \
