@@ -21,7 +21,7 @@ python -m torch.distributed.launch $DISTRIBUTED_ARGS finetune_glm.py \
        --checkpoint-activations \
        --batch-size ${BATCH_SINGLE} \
        --epochs ${EPOCH_SINGLE} \
-       --lr ${LR_SINGLE}
+       --lr ${LR_SINGLE} \
        $MODEL_ARGS \
        $TRAIN_ARGS \
        $COMMON_ARGS \

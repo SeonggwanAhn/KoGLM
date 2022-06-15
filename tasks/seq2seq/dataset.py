@@ -106,6 +106,45 @@ class SummmaryProcessor:
         return example_list
 
 
+class AIHubSummaryProcessor:
+    def __init__(self, task, data_dir, tokenizer):
+        self.task = task
+        self.data_dir = data_dir
+        self.tokenizer = tokenizer
+
+    def create_examples(self, split):
+        if split == "train":
+            filename = "train_original.json"
+        elif split == "dev":
+            filename = "valid_original.json"
+        elif split == "test":
+            filename = "valid_original.json"
+        else:
+            raise NotImplementedError(split)
+        print_rank_0(f"Creating {self.task}-{split} dataset from {self.data_dir}")
+        with open(os.path.join(self.data_dir, filename), encoding='utf-8') as file:
+            datum = json.load(file)
+        example_list = list()
+        for idx, document in enumerate(datum["documents"]):
+            source = [document["title"]]
+            for text in document["text"]:
+                for sent in text:
+                    if sent == []:
+                        continue
+                    source.append(sent["sentence"])
+            source_text = ' '.join(source)
+
+            target_text = [abs_summary for abs_summary in document["abstractive"] if abs_summary != '']
+            guid = document["id"]
+            for tgt in target_text:
+                meta = {"ref": self.tokenizer.DecodeIds(self.tokenizer.EncodeAsIds(tgt).tokenization)}
+                example = InputExample(guid=guid, text_a=source_text, text_b=tgt, meta=meta)
+                if idx < 7:
+                    print_rank_0((source_text.encode('utf-8').decode('utf-8'), tgt.encode('utf-8').decode('utf-8'), meta["ref"].encode('utf-8').decode('utf-8')))
+                example_list.append(example)
+        return example_list
+
+
 class CMRCProcessor:
     def __init__(self, data_dir, tokenizer):
         self.data_dir = data_dir
@@ -591,6 +630,8 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
             self.processor = KorQuADGenerationProcessor(self.data_dir, tokenizer)
         elif self.task in ['korquad_answer']:
             self.processor = KorQuADAnswerProcessor(self.data_dir, tokenizer, self.max_src_length, args)
+        elif self.task in ['aihub_summary']:
+            self.processor = AIHubSummaryProcessor(self.task, self.data_dir, tokenizer)
         else:
             raise NotImplementedError(self.task)
         example_list = self.processor.create_examples(split)
@@ -610,10 +651,10 @@ class Seq2SeqDataset(torch.utils.data.Dataset):
         pad_id = self.tokenizer.get_command('pad').Id
         sop_id = self.tokenizer.get_command('sop').Id
         eop_id = self.tokenizer.get_command('eop').Id
-        if self.task in ["gigaword", "cnn_dm", "cnn_dm_original", "xsum"]:
+        if self.task in ["gigaword", "cnn_dm", "cnn_dm_original", "xsum", "aihub_summary"]:
             source_text, target_text = example.text_a, example.text_b
             source_tokens = self.tokenizer.EncodeAsIds(" " + source_text).tokenization
-            prompt = [cls_id, mask_id] + self.tokenizer.EncodeAsIds(" Content:").tokenization
+            prompt = [cls_id, mask_id] + self.tokenizer.EncodeAsIds(" 내용:").tokenization  # Content:
             if len(source_tokens) > self.max_src_length - len(prompt):
                 source_tokens = source_tokens[:self.max_src_length - len(prompt)]
             source_tokens = prompt + source_tokens
