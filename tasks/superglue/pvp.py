@@ -1384,13 +1384,17 @@ class NSMCPVP(PVP):
         "1": ["없다"]
     }
 
+    VERBALIZER_D = {
+        "0": ["국민"],
+        "1": ["시민"]
+    }
     # @property
     # def is_multi_token(self):
     #     return False
     
     @staticmethod
     def available_patterns():
-        return [0, 1, 2, 3, 4]
+        return [0, 1, 2, 3, 4, 5]
     
     # is it necessary?
     @property
@@ -1409,6 +1413,8 @@ class NSMCPVP(PVP):
             parts_a, parts_b = [sent, None, " 이 영화는 재미가 ", None, [self.mask], "."], []
         elif self.pattern_id == 4:
             parts_a, parts_b = ["반응: ", None, sent, ". 결론: 재미가 ", None, None, [self.mask], None, "."], []
+        elif self.pattern_id == 5:
+            parts_a, parts_b = [sent, " 이건 아무 의미없는 패턴과, verbalizer이다.", [self.mask]], []
         else:
             raise NotImplementedError(self.pattern_id)
 
@@ -1421,9 +1427,11 @@ class NSMCPVP(PVP):
             return NSMCPVP.VERBALIZER_A[label]
         elif self.pattern_id == 2:
             return NSMCPVP.VERBALIZER_B[label]
-        elif self.pattern_id in [3, 4, 5]:
+        elif self.pattern_id in [3, 4]:
             return NSMCPVP.VERBALIZER_C[label]
-        
+        elif self.pattern_id in [5]:
+            return NSMCPVP.VERBALIZER_D[label]       
+
 
 class KornliPVP(PVP):
     VERBALIZER_A = {
