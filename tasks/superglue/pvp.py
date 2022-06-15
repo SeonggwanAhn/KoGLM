@@ -1621,7 +1621,7 @@ PVPS = {
     'cluewsc': CLUEWSCPVP,
     'nsmc': NSMCPVP,
     'kornli': KornliPVP,
-    'korquad': SquadPVP,  # KorquadPVP,
+    # 'korquad': SquadPVP,  # KorquadPVP,
     'ynat': YnatPVP,
     'korsts': KorstsPVP,
 }
