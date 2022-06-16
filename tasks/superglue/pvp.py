@@ -1375,8 +1375,8 @@ class NSMCPVP(PVP):
     }
 
     VERBALIZER_B = {
-        "0": ["맞다"],
-        "1": ["아니다"]
+        "0": ["아니다"],
+        "1": ["맞다"]
     }
 
     VERBALIZER_C = {
