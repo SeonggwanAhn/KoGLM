@@ -1534,13 +1534,13 @@ class YnatPVP(PVP):
 
 class KorstsPVP(PVP):
     VERBALIZER_A = {
-        "0": "유사한",
-        "1": "다른"
+        "0": "다른",
+        "1": "유사한"
     }
 
     VERBALIZER_B = {
-        "0": "맞다",
-        "1": "아니다"
+        "0": "아니다",
+        "1": "맞다"
     }
 
 
