@@ -1380,8 +1380,8 @@ class NSMCPVP(PVP):
     }
 
     VERBALIZER_C = {
-        "0": ["있다"],
-        "1": ["없다"]
+        "0": ["없다"],
+        "1": ["있다"]
     }
 
     VERBALIZER_D = {
