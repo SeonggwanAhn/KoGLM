@@ -22,7 +22,9 @@ This code is based on [GLM](https://github.com/THUDM/GLM)
 
      ```git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cpp_ext --cuda_ext```
 
-### 
+```
+bash scripts/koglm_pretrain.sh config/kor_block_base.sh
+```
 
 ### I will make the README more detail soon...
 
