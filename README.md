@@ -23,7 +23,7 @@ $ bash scripts/koglm_pretrain.sh config/kor_block_base.sh
 ## Finetune
 On NSMC task
 ```
-$ bash scripts/finetune_superglue.sh config_tasks/koglm_blocklm_base.sh config_tasks/task_nsmc_pattern.sh (pattern-id)*
+$ bash scripts/finetune_superglue.sh config_tasks/koglm_blocklm_base.sh config_tasks/task_nsmc_pattern.sh (pattern-id)
 ```
 
 
