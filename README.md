@@ -1,12 +1,30 @@
 # KoGLM
+__KoGLM(Korean General Language Model)__ is a Korean pretrained Language model of GLM(General Language Model).
 
-## Environment
+This code is based on [GLM](https://github.com/THUDM/GLM)
 
-I used
-- python==3.8.12
-- torch==1.8.0
-- Details are in the requirements.txt
-- I didn't used (1) docker GLM authors used, (2) deepspeed
+## Finetune
+
+## Pretrain
+### Environment
+1. Create environment
+
+    (1) Using Anaconda
+
+      ```$ conda env create -f koglm_environment.yml```, you need to change ```prefix```, ```name``` according to your environment.
+
+    (2) Other cases
+      - Details are in the requirements.txt
+
+2. Install apex
+
+    Additionaly, you need to install apex.
+
+     ```git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cpp_ext --cuda_ext```
+
+```
+bash scripts/koglm_pretrain.sh config/kor_block_base.sh
+```
 
 ### I will make the README more detail soon...
 
