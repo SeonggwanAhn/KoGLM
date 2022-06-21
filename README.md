@@ -1,7 +1,7 @@
 # KoGLM
-__KoGLM(Korean General Language Model)__ is a Korean version of GLM(General Language Model).
+__KoGLM(Korean General Language Model)__ is a Korean version of [GLM(General Language Model)](https://github.com/THUDM/GLM).
 
-This code is based on [GLM](https://github.com/THUDM/GLM)
+
 
 ## Setup
 1. A conda environment is used
@@ -25,6 +25,8 @@ On NSMC task
 ```
 $ bash scripts/finetune_superglue.sh config_tasks/koglm_blocklm_base.sh config_tasks/task_nsmc_pattern.sh (pattern-id)
 ```
+
+If you want to develop your own PET(Pattern-Exploiting Training), refer to [here](https://github.com/SeonggwanAhn/KoGLM/tree/main/tasks/superglue)
 
 
 ### I will make the README more detail soon...
