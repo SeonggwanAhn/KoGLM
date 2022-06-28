@@ -49,18 +49,45 @@ class Processor:
             sentences = list()
             with open(json_file) as f:
                 data = json.load(f)
-            doc = data['document']
+            doc: list = data['document']
             string = ""
+            
             for article in doc:
                 for l in article[self.category]:
                     text = l['form'].replace('\n', '').replace('\r', '')
-                    text = re.sub('[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9\.\/\!\@\#\$\%\^\&?\;\:\`\'\-\,\|\~\_\(\)\[\]\{\}\"\s\+-=\\\\]', '', text)
-                    sentences.append(text)
-            """    
+                    # text = re.sub('[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9\.\/\!\@\#\$\%\^\&?\;\:\`\'\-\,\|\~\_\(\)\[\]\{\}\"\s\+-=\\\\]', '', text)
+                    if len(text) == 0:
+                        continue
+                    if self.do_rearrange:
+                        string += text + ' '
+                    else:
+                        sentences.append(text)
+               
+            
+            if self.do_rearrange:
+                sentences = list()
+                while sentences == []:
+                    try:
+                        if string == '':
+                            break
+                        sentences = split_sentences(string.strip(), backend='mecab')
+                    except IndexError:
+                        # string = ' '.join(string.split(' ')[:-50])
+                        split_idx = int(len(string.split(' '))*0.1)
+                        string = ' '.join(string.split(' ')[:-split_idx])
+                        print(f'{string}\t{len(string)}')
+                        pass
+                    
+                assert len(sentences) not in [0], json_file_name
+            """
             # for only KParlty
             for l in doc[self.category]:
-                sentences.append(l['form'].replace('\n','').replace('\r',''))
+                text = l['form'].replace('\n','').replace('\r','').strip()
+                if text == '':
+                    continue
+                sentences.append(text)
             """
+                    
             self.write(json_file_name, sentences)
         
 
