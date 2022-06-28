@@ -1,20 +1,12 @@
 # KoGLM
-__KoGLM(Korean General Language Model)__ is a Korean pretrained Language model of GLM(General Language Model).
+__KoGLM(Korean General Language Model)__ is a Korean version of [GLM(General Language Model)](https://github.com/THUDM/GLM).
 
-This code is based on [GLM](https://github.com/THUDM/GLM)
 
-## Finetune
 
-## Pretrain
-### Environment
-1. Create environment
+## Setup
+1. A conda environment is used
 
-    (1) Using Anaconda
-
-      ```$ conda env create -f koglm_environment.yml```, you need to change ```prefix```, ```name``` according to your environment.
-
-    (2) Other cases
-      - Details are in the requirements.txt
+    ```$ conda env create -f koglm_environment.yml``` you need to change ```prefix```, ```name``` according to your environment.
 
 2. Install apex
 
@@ -22,9 +14,20 @@ This code is based on [GLM](https://github.com/THUDM/GLM)
 
      ```git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cpp_ext --cuda_ext```
 
+
+## Pretrain
 ```
-bash scripts/koglm_pretrain.sh config/kor_block_base.sh
+$ bash scripts/koglm_pretrain.sh config/kor_block_base.sh
 ```
+
+## Finetune
+On NSMC task
+```
+$ bash scripts/finetune_superglue.sh config_tasks/koglm_blocklm_base.sh config_tasks/task_nsmc_pattern.sh (pattern-id)
+```
+
+If you want to develop your own PET(Pattern-Exploiting Training), refer to [here](https://github.com/SeonggwanAhn/KoGLM/tree/main/tasks/superglue)
+
 
 ### I will make the README more detail soon...
 
