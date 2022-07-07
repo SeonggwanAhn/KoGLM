@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# nproc_per_node: # of processes (# of GPU)
+# nnodes: # of nodes
+# batch_size - batch per process
+
 source $1
 N_GPU=2
 MASTER_PORT=$(shuf -n 1 -i 10000-65535)
