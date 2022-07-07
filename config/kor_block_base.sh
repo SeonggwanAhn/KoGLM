@@ -1,4 +1,7 @@
 #! /bin/bash
+# This script supposes MP_SIZE(Model Parallelism size) 2
+# If you want to change MP_SIZE, you need to change the args,
+# -model-parallel-size, -batch-size(batch per processor)
 
 script_path=$(realpath $BASH_SOURCE)
 script_dir=$(dirname $script_path)
