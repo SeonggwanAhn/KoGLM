@@ -8,14 +8,14 @@ gpt_options=" \
        --block-lm \
        --bert-prob 1.0 \
        --experiment-name blocklm-blank \
-       --model-parallel-size 1 \
+       --model-parallel-size 2 \
        --num-layers 12 \
        --hidden-size 768 \
        --num-attention-heads 12 \
        --seq-length 512 \
        --max-position-embeddings 512 \
        --save /home/tempuser/ckpt \
-       --train-iters 3000000 \
+       --train-iters 1500000 \
        --resume-dataloader \
        --train-data nikl_newspaper online_review nikl_kparlty nikl_daily nikl_newspaper_2020 nikl_messenger nikl_newspaper_2021 nikl_spoken nikl_written nikl_om \
        --tokenizer-type BertWordPieceTokenizer \
