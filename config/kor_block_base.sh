@@ -30,8 +30,8 @@ gpt_options=" \
        --adam-beta2 0.98 \
        --adam-eps 1e-6 \
        --weight-decay 0.1 \
-	   --lr 0.0004 \
+       --lr 0.0004 \
        --fp16 \
        --eval-interval 10000 \
-	   --save-interval 100000 \
+       --save-interval 100000 \
 "
