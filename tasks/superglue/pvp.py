@@ -1370,8 +1370,8 @@ class CMRCPVP(PVP):
 
 class NSMCPVP(PVP):
     VERBALIZER_A = {
-        "0": ["부정적"],
-        "1": ["긍정적"]
+        "0": ["부정"],  # 부정적
+        "1": ["긍정"]   # 긍정적
     }
 
     VERBALIZER_B = {

@@ -6,4 +6,4 @@ MODEL_ARGS="--block-lm \
             --max-position-embeddings 512 \
             --tokenizer-model-type monologg/koelectra-base-v3-discriminator \
             --tokenizer-type BertWordPieceTokenizer \
-            --load-pretrained ${CHECKPOINT_PATH}/blocklm-blank06-03-23-25"
+            --load-pretrained ${CHECKPOINT_PATH}/blocklm-blank06-29-03-45/"
