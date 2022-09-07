@@ -3,8 +3,8 @@ TASK_NAME=NSMC
 DATA_PATH="${DATA_ROOT}/nsmc"
 MAX_SEQ_LEN=256
 # lr 3e-5, epoch 5
-LR_SINGLE=3e-5
-EPOCH_SINGLE=10
+LR_SINGLE=9e-6
+EPOCH_SINGLE=5
 
 TRAIN_ARGS="--lr-decay-style linear \
             --warmup 0.1 \
