@@ -6,7 +6,9 @@ __KoGLM(Korean General Language Model)__ is a Korean version of [GLM(General Lan
 ## Setup
 1. A conda environment is used
 
-    ```$ conda env create -f koglm_environment.yml``` you need to change ```prefix```, ```name``` according to your environment.
+    ```$ conda env create -f koglm_environment.yml```.
+    
+    You need to change ```prefix```, ```name``` according to your environment.
 
 2. Install apex
 
@@ -28,6 +30,14 @@ $ bash scripts/finetune_superglue.sh config_tasks/koglm_blocklm_base.sh config_t
 
 If you want to develop your own PET(Pattern-Exploiting Training), refer to [here](https://github.com/SeonggwanAhn/KoGLM/tree/main/tasks/superglue)
 
+
+## Results  
+* tasks: NSMC, ...
+* Best score among the patterns of each task.
+
+|    Models    |    NSMC    |
+| -------------|----------- |
+|  __KoGLM__   |   91.11    |
 
 ### I will make the README more detail soon...
 
