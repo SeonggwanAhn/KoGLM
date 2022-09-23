@@ -2,9 +2,10 @@ EXPERIMENT_NAME=${MODEL_TYPE}-kornli-pattern$3
 TASK_NAME=kornli
 DATA_PATH="${DATA_ROOT}/klue-nli-v1.1"
 MAX_SEQ_LEN=256
-
+# best hparmas
+# lr: 2e-5 & batch 16
 LR_SINGLE=2e-5
-EPOCH_SINGLE=50
+EPOCH_SINGLE=20
 
 TRAIN_ARGS="--lr-decay-style linear \
             --warmup 0.1 \
